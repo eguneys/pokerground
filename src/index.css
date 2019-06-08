@@ -1,0 +1,239 @@
+.pg-wrap {
+  position: relative;
+}
+
+pg-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: block;
+  bottom: 0;
+}
+
+pg-table {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  background-size: cover;
+  cursor: pointer;
+}
+
+.actions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.actions .action {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+
+  font-size: 1.2em;
+  color: white;
+
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.actions.five .action.one {
+  bottom: 42%;
+  left: 50%;
+}
+.actions.five .action.two {
+  bottom: 50%;
+  left: 25%;
+}
+.actions.five .action.three {
+  bottom: 63%;
+  left: 28%;
+}
+.actions.five .action.four {
+  bottom: 63%;
+  left: 72%;
+}
+.actions.five .action.five {
+  bottom: 50%;
+  left: 75%;
+}
+
+.action .small-blind,
+.action .big-blind,
+.action .raise,
+.action .allin {
+  padding-right: 12px;
+  color: rgba(240, 255, 0, 1);
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 20px;
+}
+
+.action .call {
+  padding-right: 12px;
+  color: rgba(34, 167, 240, 1);
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 20px;  
+}
+
+.action i {
+  text-align: center;
+}
+
+.action .small-blind i,
+.action .big-blind i,
+.action .raise i,
+.action .allin i  {
+  padding: 2px 8px;
+  margin-right: 4px;
+  background: rgba(240, 255, 0, 1);
+  color: black;
+}
+
+.action .call i {
+  padding: 4px 8px;
+  margin-right: 4px;
+  background: rgba(34, 167, 240, 1);
+  color: black;  
+}
+
+.action .check i {
+  padding: 4px 8px;
+  background: rgba(34, 167, 240, 1);
+  color: black;
+}
+
+.action i {
+  border-radius: 50%;
+}
+
+.actions .action:last-child {
+  animation: anim-popup .3s ease;
+}
+
+
+.seats {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.seats .seat {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+
+  font-size: 60px;
+  color: white;
+
+  height: 20%;
+  width: 14%;
+  text-align: center;
+  transform: translateX(-50%);
+  
+}
+
+.seats.five .seat.one {
+  bottom: 18%;
+  left: 50%;
+}
+.seats.five .seat.two {
+  bottom: 28%;
+  left: 20%;
+}
+.seats.five .seat.three {
+  bottom: 70%;
+  left: 28%;
+}
+.seats.five .seat.four {
+  bottom: 70%;
+  left: 72%;
+}
+.seats.five .seat.five {
+  bottom: 28%;
+  left: 80%;
+}
+
+.seats .seat.empty:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.seats .seat.empty i {
+  align-self: center;
+  animation: anim-glow 2s ease infinite;
+}
+
+.seats .seat.one.empty i {
+  animation-delay: -4s;
+}
+.seats .seat.two.empty i {
+  animation-delay: -3s;
+}
+.seats .seat.three.empty i {
+  animation-delay: -2s;
+}
+.seats .seat.four.empty i {
+  animation-delay: -1s;
+}
+.seats .seat.five.empty i {
+  animation-delay: -5s;
+}
+
+.seats .seat.empty {
+  border: solid 2px white;
+  border-radius: 50%;
+}
+
+.seats .seat img {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+}
+
+.seats .seat .stack {
+  font-size: 0.3em;
+  position: absolute;
+  bottom: -2em;
+}
+
+.seats .seat .timer {
+  position: absolute;
+  top: -8%;
+  left: -8%;
+  width: calc(100% + 16%);
+  height: calc(100% + 16%);
+}
+
+.timer svg {
+}
+
+.timer circle.bar {
+  stroke: #42a5f5;
+  stroke-width: 2;
+}
+
+.timer circle.border {
+  stroke: black;
+  stroke-width: 1;
+}
+
+@keyframes anim-glow {
+  0% {
+    text-shadow: 0 0 white;
+  }
+  100% {
+    text-shadow: 0px -20px transparent;
+  }
+}
+
+@keyframes anim-popup {
+  0% {
+    transform: translateX(-50%) scale(0, 0);
+  }
+  100% {
+    transform: translateX(-50%) scale(1, 1);
+  }
+}

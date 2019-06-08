@@ -1,0 +1,84 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+require 'base64'
+include FileUtils
+
+lila_dir = pwd()
+source_dir = lila_dir + '/assets/cards/'
+dest_dir = lila_dir + '/assets/cards-css/'
+
+themes = [
+  ['pixel', 'svg']
+]
+types = {
+  'svg' => 'svg+xml;base64,',
+  'png' => 'png;base64,'
+}
+
+klassRanks = [ 'ace', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'jack', 'queen', 'king']
+klassSuits = ['hearts', 'spades', 'diamonds', 'clubs']
+
+ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K']
+suits = ['H', 'S', 'D', 'C']
+
+
+# inline SVG
+themes.map { |theme|
+  name = theme[0]
+  ext = theme[1]
+  classes = suits.each_with_index.map { |suit, iSuit|
+    ranks.each_with_index.map { |rank, iRank|
+      klassRank = klassRanks[iRank]
+      klassSuit = klassSuits[iSuit]
+      card = rank + suit
+      file = source_dir + name + '/' + card + '.' + ext
+      File.open(file, 'r') do|image_file|
+        image = image_file.read
+        base64 = Base64.strict_encode64(image)
+        '.is2d .' + klassRank + '.' + klassSuit + ' {' +
+          "background-image:url('data:image/" + types[ext] + base64 + "')}"
+      end
+    }
+  }.flatten
+
+  card = '1B'
+  file = source_dir + name + '/' + card + '.' + ext
+  back = File.open(file, 'r') do|image_file|
+    image = image_file.read
+    base64 = Base64.strict_encode64(image)
+    '.is2d .' + 'back' + ' {' +
+      "background-image:url('data:image/" + types[ext] + base64 + "')}"
+  end
+  classes.append back
+
+  File.open(dest_dir + name + '.css', 'w') { |f| f.puts classes.join("\n") }
+}
+
+# external SVG
+themes.map { |theme|
+  name = theme[0]
+  ext = theme[1]
+  classes = suits.each_with_index.map { |suit, iSuit|
+    ranks.each_with_index.map { |rank, iRank|
+      klassRank = klassRanks[iRank]
+      klassSuit = klassSuits[iSuit]
+      card = rank + suit
+      '.is2d .' + klassRank + '.' + klassSuit + ' {' +
+        "background-image:url('/assets/cards/" + name + "/" + card + "." + ext + "')}"
+    }
+  }.flatten
+
+  card = '1B'
+  file = source_dir + name + '/' + card + '.' + ext
+  back = File.open(file, 'r') do|image_file|
+    image = image_file.read
+    base64 = Base64.strict_encode64(image)
+    '.is2d .' + 'back' + ' {' +
+      "background-image:url('/assets/cards/" + name + "/" + card + "." + ext + "')}"
+
+  end
+  classes.append back
+
+  File.open(dest_dir + name + '.external.css', 'w') { |f| f.puts classes.join("\n") }
+}
