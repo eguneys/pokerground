@@ -2,12 +2,12 @@ import { h } from 'snabbdom';
 
 import { numbers, numberFormat } from './util';
 import { seats as getSeats, recentActions, firstToAct, nextSeat, takeLastActionsWithIndex } from './lens';
+import * as icons from './icons';
 
 function renderSeat(ctrl, seat, index) {
   return (seat === null) ?
     h('div.seat.empty.'+numbers[index], [
-      h('i.icon.ion-md-arrow-round-down', {
-      })
+      icons.sit
     ]) :
     h('div.seat.' + numbers[index], [
       h('div.timer', [
@@ -35,7 +35,7 @@ function renderSeats(ctrl) {
 
 function renderAction(ctrl, type, klass, amount) {
   var content;
-  amount = numberFormat(amount) + ctrl.data.currency;
+  amount = amount?numberFormat(amount) + ctrl.data.currency: null;
   switch (type) {
   case 'bigBlind':
     content = h('div.big-blind', [
@@ -49,12 +49,12 @@ function renderAction(ctrl, type, klass, amount) {
     break;
   case 'raise':
     content = h('div.raise', [
-      h('i.icon.ion-md-arrow-dropup'),
+      icons.raise,
       h('span', amount)]);
     break;
   case 'allin':
     content = h('div.allin', [
-      h('i.icon.ion-md-arrow-dropup'),
+      icons.raise,
       h('span', amount)]);    
     break;
   case 'call':
@@ -62,8 +62,14 @@ function renderAction(ctrl, type, klass, amount) {
       h('i', 'C'),
       h('span', amount)]);
     break;
+  case 'fold':
+    content = h('div.fold', [
+      icons.fold,
+      amount ? h('span', amount): null
+    ]);
+    break;
   case 'check':
-    content = h('div.check', h('i.icon.ion-md-checkmark'));
+    content = h('div.check', icons.check);
     break;
   }
   return h('div.action.' + klass, {}, content);
@@ -98,8 +104,24 @@ function renderActions(ctrl) {
   return h('div.actions.' + actionsKlass, content);
 }
 
+function renderButton(ctrl) {
+  var klass = numbers[ctrl.data.button];
+  
+  return h('div.button.' + klass);
+}
+
+function renderCards(ctrl) {
+  var content = [
+    //renderShowdown(ctrl)
+    renderButton(ctrl),
+    // renderHands(ctrl)
+  ];
+  return h('div.cards', content);
+}
+
 function renderTable(ctrl) {
   return [
+    renderCards(ctrl),
     renderActions(ctrl),
     renderSeats(ctrl)
   ];

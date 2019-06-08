@@ -1,3 +1,5 @@
+import { configure } from './config';
+
 import { toAct } from './lens';
 
 import { trans } from './trans';
@@ -14,15 +16,17 @@ export default function Controller(state, redraw) {
   };
 
   this.deal = (o) => {
-    this.data.deal = o;
+    configure(this.data, { deal: o });
 
     this.data.round = 'preflop';
-
-    this.data.firstToAct = o.firstToAct;
   };
   
   this.check = () => {
     addAct({ 'act': 'check' });
+  };
+
+  this.fold = () => {
+    addAct({ 'act': 'fold' });
   };
 
   this.call = (call) => {

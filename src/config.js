@@ -10,6 +10,7 @@ export function configure(state, config) {
 
   if (config.deal) {
     state.firstToAct = config.deal.firstToAct;
+    state.button = config.deal.button;
   }
 
 }

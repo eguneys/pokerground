@@ -14,6 +14,9 @@ export default function start(ctrl, redraw) {
     check() {
       anim(() => ctrl.check(), ctrl.data);
     },
+    fold() {
+      anim(() => ctrl.fold(), ctrl.data);
+    },
     call(toCall) {
       anim(() => ctrl.call(toCall), ctrl.data);
     },

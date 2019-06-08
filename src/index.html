@@ -50,6 +50,7 @@
     <button id="call">Call</button>
     <button id="raise">Raise</button>
     <button id="allin">AllIn</button>
+    <button id="fold">Fold</button>
   </div>
 </section>
 
@@ -116,6 +117,8 @@ const promiseSerial = funcs =>
  onClick(document.getElementById("allin"), () => api.allin(10000));
 
  onClick(document.getElementById("check"), () => api.check());
+
+ onClick(document.getElementById("fold"), () => api.fold());
 
  function onClick(button, f) {
    button.addEventListener('click', f);
