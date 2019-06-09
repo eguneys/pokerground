@@ -6,6 +6,7 @@
     <link rel="shortcut icon" type="image/png" href="../assets/favicon-16x16.png"/>
     <!-- <link rel="stylesheet" href="./src/index.css"/>
          <link rel="stylesheet" href="./src/theme.css"/> -->
+    <link rel="stylesheet" href="./assets/cards-css/pixel.css"/>
     <link href="https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     <style>
@@ -46,6 +47,7 @@
 
   <div id="controls">
     <button id="deal">Deal</button>
+    <button id="round">Next Round</button>
     <button id="check">Check</button>
     <button id="call">Call</button>
     <button id="raise">Raise</button>
@@ -99,16 +101,34 @@ const promiseSerial = funcs =>
    return api;
  }
 
- onClick(document.getElementById("deal"), function() {
-   var o = {
-     blinds: 100,
-     button: 0,
-     smallBlind: 1,
-     bigBlind: 2,
-     firstToAct: 3
+ onClick(document.getElementById("deal"), (() => {
+   var seatIndexes = [0,1,4];
+   var nextIndex = (from) => {
+     return seatIndexes[
+       (seatIndexes.indexOf(from) + 1) % seatIndexes.length];
    };
-   api.deal(o);
- });
+   var button = seatIndexes[0];
+   return function() {
+     var o = {
+       blinds: 100,
+       button: button,
+       smallBlind: nextIndex(button),
+       bigBlind: nextIndex(nextIndex(button)),
+       firstToAct: nextIndex(nextIndex(nextIndex(button)))
+     };
+     api.deal(o);
+     button = nextIndex(button);
+   }
+ })()
+ );
+
+ onClick(document.getElementById("round"), (() => {
+   var pot = 0;
+   return function() {
+     pot += 3250;
+     api.nextRound(pot);
+   };
+ })());
 
  onClick(document.getElementById("raise"), () => api.raise(10000));
 

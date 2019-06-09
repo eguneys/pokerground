@@ -1,3 +1,13 @@
+export function nextRound(ctrl) {
+  var rounds = ['predeal', 'preflop', 'flop', 'turn', 'river'];
+
+  return rounds[(rounds.indexOf(ctrl.data.round) + 1) % rounds.length];
+}
+
+export function involved(ctrl) {
+  return ctrl.data.involved;
+}
+
 export function seats(ctrl) {
   return ctrl.data.pov.seats;
 }
@@ -10,15 +20,20 @@ export function firstToAct(ctrl) {
   return ctrl.data.firstToAct;
 }
 
+export function seatIndexes(ctrl) {
+  return seats(ctrl)
+    .map((seat, i)=> ({ seat, i }))
+    .reduce((acc, {seat, i}) => {
+    if (seat != null) {
+      acc.push(i);
+    }
+    return acc;
+  }, []);
+}
+
 export function nextSeat(ctrl, from, i) {
-  var to = from;
-  var ss = seats(ctrl);
-  while (i > 0) {
-    i--;
-    do {
-      to = (to + 1) % ctrl.data.seats;
-    } while (ss[to] === null);
-  }
+  var indexes = seatIndexes(ctrl);
+  var to = indexes[(indexes.indexOf(from) + i) % ctrl.data.players];
   return to;
 }
 

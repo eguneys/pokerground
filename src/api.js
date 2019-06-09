@@ -11,6 +11,9 @@ export default function start(ctrl, redraw) {
     deal(o) {
       anim(() => ctrl.deal(o), ctrl.data);
     },
+    nextRound(pot) {
+      anim(() => ctrl.nextRound(pot), ctrl.data);
+    },
     check() {
       anim(() => ctrl.check(), ctrl.data);
     },
