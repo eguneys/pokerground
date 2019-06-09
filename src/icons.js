@@ -11,3 +11,5 @@ export const raise = icon('arrow-dropup');
 export const fold = icon('close');
 
 export const check = icon('checkmark');
+
+export const chip = icon('help-buoy');

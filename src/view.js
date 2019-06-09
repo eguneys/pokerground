@@ -1,6 +1,6 @@
 import { h } from 'snabbdom';
 
-import { numbers, numberFormat } from './util';
+import { numbers, numberFormat, chipsFormat, currencyFormat } from './util';
 import * as util from './util';
 
 import * as lens from './lens';
@@ -82,7 +82,7 @@ function renderAction(ctrl, type, index, klass, amount) {
     break;
   }
   return h('div.action.' + klass, {
-    style: ctrl.collectPots ? actionStyle(ctrl, index): ''
+    style: (ctrl.collectPots && type !== 'check') ? actionStyle(ctrl, index): ''
   }, content);
 }
 
@@ -113,6 +113,14 @@ function renderActions(ctrl) {
              )];
   
   return h('div.actions.' + actionsKlass, content);
+}
+
+function renderPot(ctrl) {
+  var amount = ctrl.data.pot;
+  return amount > 0 ?
+    h('div.pot', [
+      icons.chip,
+      h('span', currencyFormat(chipsFormat(amount), ctrl.data.currency))]) : null;
 }
 
 function renderButton(ctrl) {
@@ -175,11 +183,34 @@ function renderHands(ctrl) {
   return content;
 }
 
+function renderMiddleCard(card) {
+  return [
+    h('div.card.back'),
+    h('div.card.' + card.rank + '.' + card.suit)];
+}
+
+function renderMiddle(ctrl) {
+  var content = [],
+      flop,
+      turn,
+      river;
+  var middle = ctrl.data.middle;
+
+  flop = middle.flop?middle.flop.map((flop, i) => h('div.flop', renderMiddleCard(flop))):[1,2,3].map(_ => h('div.flop'));
+  turn = h('div.turn', middle.turn?renderMiddleCard(middle.turn):[]);
+  river = h('div.river', middle.river?renderMiddleCard(middle.river):[]);
+
+  content = [...content, ...flop, turn, river];
+  
+  return h('div.middle', content);
+}
+
 function renderCards(ctrl) {
   var content = [
-    //renderShowdown(ctrl)
+    renderPot(ctrl),
     renderButton(ctrl),
-    ...renderHands(ctrl)
+    ...renderHands(ctrl),
+    renderMiddle(ctrl),
   ];
   return h('div.cards', content);
 }

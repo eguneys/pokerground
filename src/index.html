@@ -124,9 +124,24 @@ const promiseSerial = funcs =>
 
  onClick(document.getElementById("round"), (() => {
    var pot = 0;
+   var middle = {};
    return function() {
      pot += 3250;
-     api.nextRound(pot);
+     var reset;
+     if (middle.river) {
+       middle = {};
+       reset = true;
+     }
+     if (middle.turn) {
+       middle.river = '2c'
+     }
+     if (middle.flop) {
+       middle.turn = 'Kh'
+     }
+     if (!reset && !middle.flop) {
+       middle.flop = ['As', 'Tc', 'Qd'];
+     }
+     api.nextRound({ middle, pot});
    };
  })());
 

@@ -6,6 +6,8 @@ import { trans } from './trans';
 
 import { makeSerialPromise } from './util';
 
+import { readMiddle } from './fen';
+
 function callUserFunction(f, ...args) {
   if (f) setTimeout(() => f(...args), 1);
 }
@@ -38,13 +40,14 @@ export default function Controller(state, redraw) {
     }, Promise.resolve());
   };
 
-  const beginCollectPots = () => {
+  const beginCollectPots = (pot) => {
     this.collectPots = true;
 
     return new Promise(resolve => {
       setTimeout(() => {
         this.collectPots = false;
 
+        this.data.pot = pot;
         this.data.round = lens.nextRound(this);
         this.data.recentActs = [];
 
@@ -63,8 +66,10 @@ export default function Controller(state, redraw) {
     return beginDeal();
   };
 
-  this.nextRound = (pot) => {
-    return beginCollectPots();
+  this.nextRound = ({ middle, pot }) => {
+    this.data.middle = readMiddle(middle) || {};
+
+    return beginCollectPots(pot);
   };
   
   this.check = () => {

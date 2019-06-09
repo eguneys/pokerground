@@ -9,6 +9,14 @@ export function makeSerialPromise() {
   };
 };
 
+export const currencyFormat = function(n, currency) {
+  return n + currency;
+};
+
+export const chipsFormat = function(n) {
+  return numberFormat(n);
+};
+
 export const numberFormat = (function() {
   var formatter = false;
   return function(n) {
@@ -42,11 +50,11 @@ export function translatePots(seats, index) {
   ];
 
   var translateMapFive = [
-    [0, -440],
-    [200, -300],
-    [-200, -300],
-    [-200, -300],
-    [-200, -300]
+    [-50, -440],
+    [80, -300],
+    [80, -300],
+    [-180, -300],
+    [-180, -300]
   ];
   
   var translate = (seats === 5) ? translateMapFive[index]:translateMapNine[index];
