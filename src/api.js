@@ -11,8 +11,11 @@ export default function start(ctrl, redraw) {
     deal(o) {
       anim(() => ctrl.deal(o), ctrl.data);
     },
-    nextRound(pot) {
-      anim(() => ctrl.nextRound(pot), ctrl.data);
+    nextRound(o) {
+      anim(() => ctrl.nextRound(o), ctrl.data);
+    },
+    showdown(o) {
+      anim(() => ctrl.showdown(o), ctrl.data);
     },
     check() {
       anim(() => ctrl.check(), ctrl.data);
@@ -20,11 +23,11 @@ export default function start(ctrl, redraw) {
     fold() {
       anim(() => ctrl.fold(), ctrl.data);
     },
-    call(toCall) {
-      anim(() => ctrl.call(toCall), ctrl.data);
+    call(call) {
+      anim(() => ctrl.call(call), ctrl.data);
     },
-    allin(toAllin) {
-      anim(() => ctrl.allin(toAllin), ctrl.data);
+    allin(allin) {
+      anim(() => ctrl.allin(allin), ctrl.data);
     },
     raise(raise) {
       anim(() => ctrl.raise(raise), ctrl.data);

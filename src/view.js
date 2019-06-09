@@ -164,16 +164,16 @@ function renderHands(ctrl) {
 
   content = [
     h('div.hand.dealer', [
-      h('div.back'),
-      h('div.back'),
-      h('div.back')
+      h('div.card.back'),
+      h('div.card.back'),
+      h('div.card.back')
     ]),
     ...ins.map(index => {
       return h('div.hand.' + numbers[index], {}, [
-        (ctrl.dealProgress[index]>=1)?h('div.back', {
+        (ctrl.dealProgress[index]>=1)?h('div.card.back', {
           style: dealRotatingStyle(ctrl, index, 1)
         }): null,
-        (ctrl.dealProgress[index]==2)?h('div.back', {
+        (ctrl.dealProgress[index]==2)?h('div.card.back', {
           style: dealRotatingStyle(ctrl, index, 2)
         }): null
       ]);
@@ -183,10 +183,14 @@ function renderHands(ctrl) {
   return content;
 }
 
+function renderCard(card) {
+  return h('div.card.' + card.rank + '.' + card.suit);
+}
+
 function renderMiddleCard(card) {
   return [
     h('div.card.back'),
-    h('div.card.' + card.rank + '.' + card.suit)];
+    renderCard(card)];
 }
 
 function renderMiddle(ctrl) {
@@ -205,12 +209,32 @@ function renderMiddle(ctrl) {
   return h('div.middle', content);
 }
 
+function renderHoles(ctrl) {
+  var content = [];
+  var sd = ctrl.data.showdown;
+
+  if (sd) {
+    content = [
+      ...content, ...Object.keys(sd.hands).map(index => {
+        var { hole } = sd.hands[index];
+      
+        return h('div.hole.' + numbers[index],
+                 hole.map(hole =>
+                   h('div', renderMiddleCard(hole))));
+      })
+    ];
+  }
+  
+  return content;
+}
+
 function renderCards(ctrl) {
   var content = [
     renderPot(ctrl),
     renderButton(ctrl),
     ...renderHands(ctrl),
     renderMiddle(ctrl),
+    ...renderHoles(ctrl)
   ];
   return h('div.cards', content);
 }

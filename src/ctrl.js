@@ -6,7 +6,7 @@ import { trans } from './trans';
 
 import { makeSerialPromise } from './util';
 
-import { readMiddle } from './fen';
+import { readMiddle, readHands } from './fen';
 
 function callUserFunction(f, ...args) {
   if (f) setTimeout(() => f(...args), 1);
@@ -70,6 +70,12 @@ export default function Controller(state, redraw) {
     this.data.middle = readMiddle(middle) || {};
 
     return beginCollectPots(pot);
+  };
+
+  this.showdown = ({ hands, pots }) => {
+    this.data.showdown = { pots, hands: readHands(hands) };
+
+    
   };
   
   this.check = () => {

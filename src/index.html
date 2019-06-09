@@ -48,6 +48,7 @@
   <div id="controls">
     <button id="deal">Deal</button>
     <button id="round">Next Round</button>
+    <button id="showdown">Showdown</button>
     <button id="check">Check</button>
     <button id="call">Call</button>
     <button id="raise">Raise</button>
@@ -101,8 +102,9 @@ const promiseSerial = funcs =>
    return api;
  }
 
+ var seatIndexes = [0,1,4];
+ 
  onClick(document.getElementById("deal"), (() => {
-   var seatIndexes = [0,1,4];
    var nextIndex = (from) => {
      return seatIndexes[
        (seatIndexes.indexOf(from) + 1) % seatIndexes.length];
@@ -119,8 +121,22 @@ const promiseSerial = funcs =>
      api.deal(o);
      button = nextIndex(button);
    }
- })()
- );
+ })());
+
+ onClick(document.getElementById("showdown"), (() => {
+   var showdown = {
+     hands: {
+       [seatIndexes[0]]: { hole: 'Ah Ac', rank: 'threepair', value: 'Ah Ac As Qd Tc' },
+       [seatIndexes[1]]: { hole: 'Kh Jh', rank: 'straight', value: 'As Kh Qd Jh Tc' },
+       [seatIndexes[2]]: { hole: '2c 3c', rank: 'highcard', value: 'As Qd Tc 3c 2c' }
+     },
+     pots: [{ amount: 1000, involved: [seatIndexes[1]]},
+            {amount: 2000, involved: [seatIndexes[0], seatIndexes[2]]}]
+   };
+   return function() {
+     api.showdown(showdown);
+   };
+ })());
 
  onClick(document.getElementById("round"), (() => {
    var pot = 0;
@@ -139,7 +155,7 @@ const promiseSerial = funcs =>
        middle.turn = 'Kh'
      }
      if (!reset && !middle.flop) {
-       middle.flop = ['As', 'Tc', 'Qd'];
+       middle.flop = 'As Tc Qd';
      }
      api.nextRound({ middle, pot});
    };
