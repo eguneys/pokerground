@@ -45,19 +45,21 @@ export function translateDeal(seats, index) {
   return `translateX(${translate[0]}%) translateY(${translate[1]}%)`;
 }
 
-export function translatePots(seats, index) {
+export function translatePots(seats, index, reverse) {
   var translateMapNine = [
   ];
 
   var translateMapFive = [
-    [-50, -440],
-    [80, -300],
-    [80, -300],
-    [-180, -300],
-    [-180, -300]
+    [0, -580],
+    [130, -480],
+    [130, -480],
+    [-130, -480],
+    [-130, -480]
   ];
+
+  var multiply = reverse ? -1 : 1;
   
   var translate = (seats === 5) ? translateMapFive[index]:translateMapNine[index];
 
-  return `translateX(${translate[0]}%) translateY(${translate[1]}%)`;
+  return `translateX(${translate[0] * multiply - 50}%) translateY(${translate[1] * multiply}%)`;
 }

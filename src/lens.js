@@ -1,7 +1,15 @@
-export function nextRound(ctrl) {
-  var rounds = ['predeal', 'preflop', 'flop', 'turn', 'river'];
+export const rounds = ['predeal', 'preflop', 'flop', 'turn', 'river', 'showdown'];
 
+export function seenRound(ctrl, round) {
+  return rounds.indexOf(ctrl.data.round) >= rounds.indexOf(round);
+};
+
+export function nextRound(ctrl) {
   return rounds[(rounds.indexOf(ctrl.data.round) + 1) % rounds.length];
+}
+
+export function showdownHands(ctrl) {
+  return ctrl.data.showdown.hands;
 }
 
 export function involved(ctrl) {

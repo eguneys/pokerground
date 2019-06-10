@@ -57,6 +57,52 @@ export default function Controller(state, redraw) {
     });
   };
 
+  const beginRevealCards = () => {
+    this.hideFlop = !lens.seenRound(this, 'flop');
+    this.hideTurn = !lens.seenRound(this, 'turn');
+    this.hideRiver = !lens.seenRound(this, 'river');
+    
+    return new Promise(resolve => {
+      setTimeout(() => {
+        this.hideFlop = false;
+        redraw();
+        setTimeout(() => {
+          this.hideTurn = false;
+          redraw();
+          setTimeout(() => {
+            this.hideRiver = false;
+            redraw();
+            setTimeout(() => {
+              resolve();
+            }, 1000);
+          }, 2000);
+        }, 2000);
+      }, 1000);
+    });
+  };
+
+  const beginSharePots = () => {
+    var pots = this.data.showdown.pots;
+
+    var serialPromise = makeSerialPromise();
+
+    pots.slice(0).reverse().reduce((acc, pot) => {
+      return acc.then(serialPromise(resolve => {
+        setTimeout(() => {
+          this.shareProgress = pot;
+          this.data.pot -= pot.amount;
+          redraw();
+          setTimeout(() => {
+            this.shareProgress = undefined;
+            redraw();
+            resolve();
+          }, 2000);
+        }, 500);
+      }));
+    }, Promise.resolve());
+    
+  };
+
   this.deal = (o) => {
     configure(this.data, { deal: o });
 
@@ -72,13 +118,19 @@ export default function Controller(state, redraw) {
     return beginCollectPots(pot);
   };
 
-  this.showdown = ({ hands, pots }) => {
+  this.showdown = ({ hands, pot, pots, middle }) => {
     this.data.showdown = { pots, hands: readHands(hands) };
+    this.data.middle = readMiddle(middle);
 
-    
+    return Promise.all([
+      beginCollectPots(pot),
+      beginRevealCards()
+        .then(beginSharePots)
+    ]);
   };
   
   this.check = () => {
+    
     addAct({ 'act': 'check' });
   };
 

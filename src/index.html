@@ -125,13 +125,24 @@ const promiseSerial = funcs =>
 
  onClick(document.getElementById("showdown"), (() => {
    var showdown = {
-     hands: {
-       [seatIndexes[0]]: { hole: 'Ah Ac', rank: 'threepair', value: 'Ah Ac As Qd Tc' },
-       [seatIndexes[1]]: { hole: 'Kh Jh', rank: 'straight', value: 'As Kh Qd Jh Tc' },
-       [seatIndexes[2]]: { hole: '2c 3c', rank: 'highcard', value: 'As Qd Tc 3c 2c' }
+     middle: {
+       flop: 'As Tc Qd',
+       turn: 'Kh',
+       river: '2c'
      },
-     pots: [{ amount: 1000, involved: [seatIndexes[1]]},
-            {amount: 2000, involved: [seatIndexes[0], seatIndexes[2]]}]
+     hands: {
+       [seatIndexes[0]]: { hole: 'Ah Ac', rank: 'threepair', hand: 'Ah Ac As Qd Tc' },
+       [seatIndexes[1]]: { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' },
+       [seatIndexes[2]]: { hole: '2c 3c', rank: 'highcard', hand: 'As Qd Tc 3c 2c' }
+     },
+     pots: [
+       { amount: 1500, involved: [seatIndexes[1]]},
+       { amount: 5000, involved: [seatIndexes[0], seatIndexes[2], seatIndexes[1]]},
+       { amount: 1500, involved: [seatIndexes[1]]},
+       { amount: 1500, involved: [seatIndexes[2]]},
+       { amount: 1500, involved: [seatIndexes[0]]},
+       { amount: 5000, involved: [seatIndexes[0], seatIndexes[2]]}],
+     pot: 16000
    };
    return function() {
      api.showdown(showdown);
