@@ -62,6 +62,7 @@ export default function Controller(state, redraw) {
     this.hideTurn = !lens.seenRound(this, 'turn');
     this.hideRiver = !lens.seenRound(this, 'river');
     
+    
     return new Promise(resolve => {
       setTimeout(() => {
         this.hideFlop = false;
@@ -76,8 +77,8 @@ export default function Controller(state, redraw) {
               resolve();
             }, 1000);
           }, 2000);
-        }, 2000);
-      }, 1000);
+        }, this.hideTurn?2000:0);
+      }, this.hideFlop?1000:0);
     });
   };
 
@@ -127,6 +128,13 @@ export default function Controller(state, redraw) {
       beginRevealCards()
         .then(beginSharePots)
     ]);
+  };
+
+  this.endRound = ({ pot, pots }) => {
+    this.data.showdown = { pots, hands: {} };
+
+    beginCollectPots(pot)
+      .then(beginSharePots);
   };
   
   this.check = () => {

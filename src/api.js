@@ -14,6 +14,9 @@ export default function start(ctrl, redraw) {
     nextRound(o) {
       anim(() => ctrl.nextRound(o), ctrl.data);
     },
+    endRound(o) {
+      anim(() => ctrl.endRound(o), ctrl.data);
+    },
     showdown(o) {
       anim(() => ctrl.showdown(o), ctrl.data);
     },

@@ -33,6 +33,13 @@
          text-align: center;
      }
 
+     .deck {
+         display: flex;
+         margin: auto;
+         width: 90%;
+         height: 30%;
+     }
+
      .pg-wrap {
          margin: auto;
          width: 90%;
@@ -49,11 +56,21 @@
     <button id="deal">Deal</button>
     <button id="round">Next Round</button>
     <button id="showdown">Showdown</button>
+    <button id="showdown2">Showdown Muck</button>
     <button id="check">Check</button>
     <button id="call">Call</button>
     <button id="raise">Raise</button>
     <button id="allin">AllIn</button>
     <button id="fold">Fold</button>
+  </div>
+</section>
+
+<section>
+  <div class="is2d deck">
+    <div class="card ace hearts"></div>
+    <div class="card ace diamonds"></div>
+    <div class="card ace clubs"></div>
+    <div class="card ace spades"></div>
   </div>
 </section>
 
@@ -121,6 +138,18 @@ const promiseSerial = funcs =>
      api.deal(o);
      button = nextIndex(button);
    }
+ })());
+
+ onClick(document.getElementById("showdown2"), (() => {
+   var showdown = {
+     pots: [
+       { amount: 1500, involved: [seatIndexes[1]]}
+     ],
+     pot: 1000
+   };
+   return function() {
+     api.endRound(showdown);
+   };
  })());
 
  onClick(document.getElementById("showdown"), (() => {

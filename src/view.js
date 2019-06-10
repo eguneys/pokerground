@@ -117,8 +117,9 @@ function renderActions(ctrl) {
 
 function renderPots(ctrl) {
   const potShareStyle = (ctrl, index) => ({
-    transition: 'transform .3s, opacity .3s',
+    transition: 'transform .3s, opacity .6s',
     delayed: {
+      opacity: 0,
       transform: util.translatePots(ctrl.data.seats, index, true)
     }
   });
@@ -203,12 +204,15 @@ function renderHands(ctrl) {
   return content;
 }
 
-function renderCard(card) {
-  return h('div.card.' + card.rank + '.' + card.suit);
+function renderCard(card, klass) {
+  return h('div.card.' + [card.rank, card.suit, klass].join('.'));
 }
 
-function renderMiddleCard(card) {
+function renderMiddleCard(card, highlight) {
+  var glow = (highlight || []).some(_ => _.rank === card.rank && _.suit === card.suit) ? h('div.card.glow') : null;
+
   return [
+    glow,
     h('div.card.back'),
     renderCard(card)];
 }
@@ -224,9 +228,19 @@ function renderMiddle(ctrl) {
       revealTurn = !ctrl.hideTurn && middle.turn,
       revealRiver = !ctrl.hideRiver && middle.river;
 
-  flop = revealFlop?middle.flop.map((flop, i) => h('div.flop', renderMiddleCard(flop))):[1,2,3].map(_ => h('div.flop'));
-  turn = h('div.turn', revealTurn?renderMiddleCard(middle.turn):[]);
-  river = h('div.river', revealRiver?renderMiddleCard(middle.river):[]);
+  var highlightHand,
+      hand,
+      pot = ctrl.shareProgress;
+
+  if (pot) {
+    hand = lens.showdownHands(ctrl)[pot.involved[0]];
+    highlightHand = hand && hand.hand;
+  }
+
+
+  flop = revealFlop?middle.flop.map((flop, i) => h('div.flop', renderMiddleCard(flop, highlightHand))):[1,2,3].map(_ => h('div.flop'));
+  turn = h('div.turn', revealTurn?renderMiddleCard(middle.turn, highlightHand):[]);
+  river = h('div.river', revealRiver?renderMiddleCard(middle.river, highlightHand):[]);
 
   content = [...content, ...flop, turn, river];
   
@@ -237,6 +251,15 @@ function renderHoles(ctrl) {
   var content = [];
   var sd = ctrl.data.showdown;
 
+  var highlightHand,
+      hand,
+      pot = ctrl.shareProgress;
+
+  if (pot) {
+    hand = lens.showdownHands(ctrl)[pot.involved[0]];
+    highlightHand = hand && hand.hand;
+  }
+
   if (sd) {
     content = [
       ...content, ...Object.keys(sd.hands).map(index => {
@@ -244,7 +267,7 @@ function renderHoles(ctrl) {
       
         return h('div.hole.' + numbers[index],
                  hole.map(hole =>
-                   h('div', renderMiddleCard(hole))));
+                   h('div', renderMiddleCard(hole, highlightHand))));
       })
     ];
   }
@@ -259,7 +282,9 @@ function renderShareHandValue(ctrl) {
     var index = pot.involved[0];
     var hand = lens.showdownHands(ctrl)[index];
 
-    content = [h('div', hand.rank)];
+    if (hand) {
+      content = [h('div', hand.rank)];
+    }
     
     return h('div.handvalue', content);
   }
