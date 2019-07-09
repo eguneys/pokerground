@@ -33,8 +33,8 @@ export function ClockController(ctrl, opts) {
   };
 
 
-  this.setClock = (d, times, initial) => {
-    const isClockRunning = d.clock.running;
+  this.setClock = ({ running, times, initial }) => {
+    const isClockRunning = running;
     const toAct = lens.toAct(ctrl);
 
     this.barTime = 1000 * initial;
@@ -50,7 +50,7 @@ export function ClockController(ctrl, opts) {
     if (isClockRunning) scheduleTick(this.times.times);
   };
 
-  this.setClock(ctrl.data, cdata.times, cdata.initial);
+  this.setClock(cdata);
 
   this.timeRatio = (millis) =>
   Math.min(1, millis * this.timeRatioDivisor);

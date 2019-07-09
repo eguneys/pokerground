@@ -158,20 +158,30 @@
      return api;
    }
 
-   var seatIndexes = [0,1,4];
+   var seatIndexes = [0,1,2];
+   const clock = { times: 30, initial: 30, running: true };
    
-   onClick(document.getElementById("deal"), (() => {
+   const apiDelay = (delay = 1000) => {
+     return new Promise(resolve => {
+       setTimeout(resolve, delay);
+     });
+   };
+
+   const apiDeal = (() => {
      var nextIndex = (from) => {
        return (from + 1) % seatIndexes.length;
      };
      var button = 0;
      return function() {
-       api.deal(button);
        button = nextIndex(button);
+       return Promise.all([
+         api.deal(button),
+         api.setClock(clock)
+       ]);
      }
-   })());
+   })();
 
-   onClick(document.getElementById("showdown2"), (() => {
+   const apiShowdownMuck = (() => {
      var showdown = {
        pots: [
          { amount: 1500, involved: [seatIndexes[1]]}
@@ -179,11 +189,11 @@
        pot: 1000
      };
      return function() {
-       api.endRound(showdown);
+       return api.endRound(showdown);
      };
-   })());
+   })();
 
-   onClick(document.getElementById("showdown"), (() => {
+   const apiShowdown = (() => {
      var showdown = {
        middle: {
          flop: 'As Tc Qd',
@@ -205,11 +215,11 @@
        pot: 16000
      };
      return function() {
-       api.showdown(showdown);
+       return api.showdown(showdown);
      };
-   })());
+   })();
 
-   onClick(document.getElementById("round"), (() => {
+   const apiNextRound = (() => {
      var pot = 0;
      var middle = {};
      return function() {
@@ -228,30 +238,57 @@
        if (!reset && !middle.flop) {
          middle.flop = 'As Tc Qd';
        }
-       api.nextRound({ middle, pot});
+       return api.nextRound({ middle, pot}).then(
+         () => api.setClock(clock)
+       );
      };
-   })());
+   })();
 
    function apiMove(o) {
-     api.move(o.uci);
-     api.setClock(o.clock);
+     let lastPromise = api.move(o.uci);
+     if (o.next) {
+       lastPromise = lastPromise.then(apiNextRound);
+     }
+     if (o.showdown) {
+       lastPromise = lastPromise.then(apiShowdown)
+                                .then(apiDelay)
+                                .then(apiDeal)
+     }
+     if (o.end) {
+       lastPromise = lastPromise.then(apiShowdownMuck)
+                                .then(() => apiDelay(2000))
+                                .then(apiDeal);
+     } else {
+       lastPromise.then(() => api.setClock(o.clock));
+     }
+     return lastPromise;
    }
 
-   const clock = { times: 30, initial: 30 };
+   onClick(document.getElementById("deal"), apiDeal);
+
+   onClick(document.getElementById("showdown2"), apiShowdownMuck);
+   
+   onClick(document.getElementById("showdown"), apiShowdown);
+
+   onClick(document.getElementById("round"), apiNextRound);
 
    onClick(document.getElementById("raise"), () => apiMove({
      uci: 'R10000',
      clock
    }));
 
-   onClick(document.getElementById("call"), () => apiMove({
-     uci: 'C1000',
-     clock
-   }));
+   onClick(document.getElementById("call"), () => {
+     apiMove({
+       uci: 'C1000',
+       clock,
+       next: true
+     })
+   });
 
    onClick(document.getElementById("allin"), () => apiMove({
      uci: 'A10000',
-     clock
+     clock,
+     showdown: true
    }));
 
    onClick(document.getElementById("check"), () => apiMove({
@@ -261,7 +298,8 @@
 
    onClick(document.getElementById("fold"), () => apiMove({
      uci: 'F',
-     clock
+     clock,
+     end: true
    }));
 
    function onClick(button, f) {

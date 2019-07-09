@@ -22,24 +22,31 @@ export default function Controller(state, redraw) {
     lens.recentActions(this).push(act);
   };
 
+  const beginDelay = (delay = 1000) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, delay);
+    });
+  };
+
   const beginDeal = () => {
     this.dealProgress = {};
 
     var serialPromise = makeSerialPromise();
-
+    
     return this.data.involved.reduce((acc, i) => {
-      return acc.then(serialPromise(resolve => {
+      return serialPromise(resolve => {
+        redraw();
         setTimeout(() => {
+          lens.seatIndexes(this);
           this.dealProgress[i] = 1;
           redraw();
           setTimeout(() => {
             this.dealProgress[i] = 2;
             redraw();
             resolve();
-          }, 500);
-        }, 500);
-      }
-      ));
+          }, 300);
+        }, 300);
+      });
     }, Promise.resolve());
   };
 
@@ -89,8 +96,8 @@ export default function Controller(state, redraw) {
 
     var serialPromise = makeSerialPromise();
 
-    pots.slice(0).reverse().reduce((acc, pot) => {
-      return acc.then(serialPromise(resolve => {
+    return pots.slice(0).reverse().reduce((acc, pot) => {
+      return serialPromise(resolve => {
         setTimeout(() => {
           this.shareProgress = pot;
           this.data.pot -= pot.amount;
@@ -99,10 +106,14 @@ export default function Controller(state, redraw) {
             this.shareProgress = undefined;
             redraw();
             resolve();
-          }, 2000);
+          }, 1000);
         }, 500);
-      }));
-    }, Promise.resolve());
+      });
+    }, Promise.resolve())
+      .then(() => {
+        this.data.involved = [];
+        redraw();
+      });
     
   };
 
@@ -113,6 +124,11 @@ export default function Controller(state, redraw) {
     this.data.play.acts = [[]];
     this.data.play.deal.button = button;
 
+    // some kind of bug on snabbdom doesnt remove dealt cards
+    // https://github.com/snabbdom/snabbdom/issues/440
+    // this.data.involved = [];
+    // redraw();
+
     this.data.involved = lens.seatIndexes(this);
 
     return beginDeal();
@@ -121,7 +137,8 @@ export default function Controller(state, redraw) {
   this.nextRound = ({ middle, pot }) => {
     this.data.middle = readMiddle(middle) || {};
 
-    return beginCollectPots(pot);
+    return beginCollectPots(pot)
+      .then(beginDelay);
   };
 
   this.showdown = ({ hands, pots, middle, pot }) => {
@@ -168,8 +185,37 @@ export default function Controller(state, redraw) {
     addAct({ 'act': 'allin', amount: allin });
   };
 
+  this.move = (move) => {
+    let lp;
+    switch(move.act) {
+    case 'check':
+      lp = this.check();
+      break;
+    case 'fold':
+      lp = this.fold();
+      break;
+    case 'call':
+      lp = this.call(move.amount);
+      break;
+    case 'allin':
+      lp = this.allin(move.amount);
+      break;
+    case 'raise':
+      lp = this.raise(move.amount);
+      break;
+    default:
+      lp = Promise.reject("bad move");
+    }
+    this.clearClock();
+    return lp;
+  };
+
   this.setClock = (o) => {
-    this.clock.setClock(this.data, o.times, o.initial);
+    this.clock.setClock(o);
+  };
+
+  this.clearClock = () => {
+    this.clock.setClock({});
   };
 
   this.trans = trans(state.i18n);

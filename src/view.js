@@ -268,8 +268,9 @@ function renderHoles(ctrl) {
     content = [
       ...content, ...Object.keys(sd.hands).map(index => {
         var { hole } = sd.hands[index];
+        var seatIndex = lens.toSeatIndex(ctrl, parseInt(index));
       
-        return h('div.hole.' + numbers[index],
+        return h('div.hole.' + numbers[seatIndex],
                  hole.map(hole =>
                    h('div', renderMiddleCard(hole, highlightHand))));
       })

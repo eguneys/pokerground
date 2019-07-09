@@ -27,20 +27,7 @@ export default function start(ctrl, redraw) {
     },
     move(uci) {
       const move = fenReadMove(uci);
-      switch(move.act) {
-      case 'check':
-        return anim(() => ctrl.check(), ctrl.data);
-      case 'fold':
-        return anim(() => ctrl.fold(), ctrl.data);
-      case 'call':
-        return anim(() => ctrl.call(move.amount), ctrl.data);
-      case 'allin':
-        return anim(() => ctrl.allin(move.amount), ctrl.data);
-      case 'raise':
-        return anim(() => ctrl.raise(move.amount), ctrl.data);
-      default:
-        return Promise.reject("bad move");
-      }
+      return anim(() => ctrl.move(move), ctrl.data);
     },
     check() {
       return anim(() => ctrl.check(), ctrl.data);
