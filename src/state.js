@@ -1,8 +1,7 @@
 export function defaults() {
   return {
-    round: 'predeal',
     middle: {},
-    recentActs: [],
+    play: {},
     involved: [],
     i18n: {}
   };

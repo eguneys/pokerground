@@ -49,173 +49,226 @@
     </style>
 </head>
 <body>
-<section>
-  <div id="app"></div>
+  <section>
+    <div id="app"></div>
 
-  <div id="controls">
-    <button id="deal">Deal</button>
-    <button id="round">Next Round</button>
-    <button id="showdown">Showdown</button>
-    <button id="showdown2">Showdown Muck</button>
-    <button id="check">Check</button>
-    <button id="call">Call</button>
-    <button id="raise">Raise</button>
-    <button id="allin">AllIn</button>
-    <button id="fold">Fold</button>
-  </div>
-</section>
+    <div id="controls">
+      <button id="deal">Deal</button>
+      <button id="round">Next Round</button>
+      <button id="showdown">Showdown</button>
+      <button id="showdown2">Showdown Muck</button>
+      <button id="check">Check</button>
+      <button id="call">Call</button>
+      <button id="raise">Raise</button>
+      <button id="allin">AllIn</button>
+      <button id="fold">Fold</button>
+    </div>
+  </section>
 
-<section>
-  <div class="is2d deck">
-    <div class="card ace hearts"></div>
-    <div class="card ace diamonds"></div>
-    <div class="card ace clubs"></div>
-    <div class="card ace spades"></div>
-  </div>
-</section>
+  <section>
+    <div class="is2d deck">
+      <div class="card ace hearts"></div>
+      <div class="card ace diamonds"></div>
+      <div class="card ace clubs"></div>
+      <div class="card ace spades"></div>
+    </div>
+  </section>
 
-<script>
+  <script>
+   
+   function init() {
+     let pokerground;
 
-const promiseSerial = funcs =>
-  funcs.reduce((promise, func) =>
-    promise.then(result => func().then(Array.prototype.concat.bind(result))),
-    Promise.resolve([]))
-
- const api = init();
-
- function init() {
- 
-   const handlers = {
-     move(o) {
-     }
-   };
-
-   var config = {
-     round: 'preflop',
-     deal: {
-       blinds: 100,
-       button: 0,
-       smallBlind: 1,
-       bigBlind: 4,
-       firstToAct: 0
-     },
-     currency: '$',
-     pov: {
-       seats: [{img: 'https://i.pravatar.cc/300', stack: 10000},
-               { img: 'https://i.pravatar.cc/300', stack: 900 },
-               null,
-               null, 
-               { img: 'https://i.pravatar.cc/300', stack: 120399}]
-     },
-     events: {
-     }
-   };
-
-   //const server = new Pokerground.Server();
-   //const socket = new Pokerground.Socket(handlers);
-
-   const api = Pokerground(document.getElementById('app'), config);
-
-   return api;
- }
-
- var seatIndexes = [0,1,4];
- 
- onClick(document.getElementById("deal"), (() => {
-   var nextIndex = (from) => {
-     return seatIndexes[
-       (seatIndexes.indexOf(from) + 1) % seatIndexes.length];
-   };
-   var button = seatIndexes[0];
-   return function() {
-     var o = {
-       blinds: 100,
-       button: button,
-       smallBlind: nextIndex(button),
-       bigBlind: nextIndex(nextIndex(button)),
-       firstToAct: nextIndex(nextIndex(nextIndex(button)))
+     const handlers = {
+       move(o) {
+       }
      };
-     api.deal(o);
-     button = nextIndex(button);
+
+     function makeConfig(data) {
+       return {
+         round: data.round,
+         deal: {
+           blinds: data.blinds,
+           button: data.button,
+           smallBlind: data.smallBlind,
+           bigBlind: data.bigBlind,
+           firstToAct: data.firstToAct
+         },
+         currency: data.currency,
+         pov: {
+           seats: data.seats
+         },
+         events: {
+         }
+       };
+     }
+
+     const server = new Pokerground.Server();
+     //const socket = new Pokerground.Socket(handlers);
+
+     // const data = server.get();
+
+     // pokerground = Pokerground(document.getElementById('app2'), makeConfig(data));
    }
- })());
 
- onClick(document.getElementById("showdown2"), (() => {
-   var showdown = {
-     pots: [
-       { amount: 1500, involved: [seatIndexes[1]]}
-     ],
-     pot: 1000
-   };
-   return function() {
-     api.endRound(showdown);
-   };
- })());
 
- onClick(document.getElementById("showdown"), (() => {
-   var showdown = {
-     middle: {
-       flop: 'As Tc Qd',
-       turn: 'Kh',
-       river: '2c'
-     },
-     hands: {
-       [seatIndexes[0]]: { hole: 'Ah Ac', rank: 'threepair', hand: 'Ah Ac As Qd Tc' },
-       [seatIndexes[1]]: { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' },
-       [seatIndexes[2]]: { hole: '2c 3c', rank: 'highcard', hand: 'As Qd Tc 3c 2c' }
-     },
-     pots: [
-       { amount: 1500, involved: [seatIndexes[1]]},
-       { amount: 5000, involved: [seatIndexes[0], seatIndexes[2], seatIndexes[1]]},
-       { amount: 1500, involved: [seatIndexes[1]]},
-       { amount: 1500, involved: [seatIndexes[2]]},
-       { amount: 1500, involved: [seatIndexes[0]]},
-       { amount: 5000, involved: [seatIndexes[0], seatIndexes[2]]}],
-     pot: 16000
-   };
-   return function() {
-     api.showdown(showdown);
-   };
- })());
+   init();
+  </script>
 
- onClick(document.getElementById("round"), (() => {
-   var pot = 0;
-   var middle = {};
-   return function() {
-     pot += 3250;
-     var reset;
-     if (middle.river) {
-       middle = {};
-       reset = true;
+  <script>
+
+   const promiseSerial = funcs =>
+     funcs.reduce((promise, func) =>
+       promise.then(result => func().then(Array.prototype.concat.bind(result))),
+                  Promise.resolve([]))
+
+   const api = init();
+
+   function init() {
+     
+     const handlers = {
+       move(o) {
+       }
+     };
+
+     var config = {
+       currency: '$',
+       fen: '70b 50B 100!20(30 50 .)~10!0\nR20 R20',
+       clock: {
+         running: true,
+         initial: 60,
+         times: 60,
+       },
+       pov: {
+         seats: [{img: 'https://i.pravatar.cc/300', idx: 0 },
+                 { img: 'https://i.pravatar.cc/300', idx: 1 },
+                 null,
+                 null,
+                 { img: 'https://i.pravatar.cc/300', idx: 2 }]
+       },
+       events: {
+       }
+     };
+
+     //const server = new Pokerground.Server();
+     //const socket = new Pokerground.Socket(handlers);
+
+     const api = Pokerground(document.getElementById('app'), config);
+
+     return api;
+   }
+
+   var seatIndexes = [0,1,4];
+   
+   onClick(document.getElementById("deal"), (() => {
+     var nextIndex = (from) => {
+       return (from + 1) % seatIndexes.length;
+     };
+     var button = 0;
+     return function() {
+       api.deal(button);
+       button = nextIndex(button);
      }
-     if (middle.turn) {
-       middle.river = '2c'
-     }
-     if (middle.flop) {
-       middle.turn = 'Kh'
-     }
-     if (!reset && !middle.flop) {
-       middle.flop = 'As Tc Qd';
-     }
-     api.nextRound({ middle, pot});
-   };
- })());
+   })());
 
- onClick(document.getElementById("raise"), () => api.raise(10000));
+   onClick(document.getElementById("showdown2"), (() => {
+     var showdown = {
+       pots: [
+         { amount: 1500, involved: [seatIndexes[1]]}
+       ],
+       pot: 1000
+     };
+     return function() {
+       api.endRound(showdown);
+     };
+   })());
 
- onClick(document.getElementById("call"), () => api.call(1000));
+   onClick(document.getElementById("showdown"), (() => {
+     var showdown = {
+       middle: {
+         flop: 'As Tc Qd',
+         turn: 'Kh',
+         river: '2c'
+       },
+       hands: {
+         [seatIndexes[0]]: { hole: 'Ah Ac', rank: 'threepair', hand: 'Ah Ac As Qd Tc' },
+         [seatIndexes[1]]: { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' },
+         [seatIndexes[2]]: { hole: '2c 3c', rank: 'highcard', hand: 'As Qd Tc 3c 2c' }
+       },
+       pots: [
+         { amount: 1500, involved: [seatIndexes[1]]},
+         { amount: 5000, involved: [seatIndexes[0], seatIndexes[2], seatIndexes[1]]},
+         { amount: 1500, involved: [seatIndexes[1]]},
+         { amount: 1500, involved: [seatIndexes[2]]},
+         { amount: 1500, involved: [seatIndexes[0]]},
+         { amount: 5000, involved: [seatIndexes[0], seatIndexes[2]]}],
+       pot: 16000
+     };
+     return function() {
+       api.showdown(showdown);
+     };
+   })());
 
- onClick(document.getElementById("allin"), () => api.allin(10000));
+   onClick(document.getElementById("round"), (() => {
+     var pot = 0;
+     var middle = {};
+     return function() {
+       pot += 3250;
+       var reset;
+       if (middle.river) {
+         middle = {};
+         reset = true;
+       }
+       if (middle.turn) {
+         middle.river = '2c'
+       }
+       if (middle.flop) {
+         middle.turn = 'Kh'
+       }
+       if (!reset && !middle.flop) {
+         middle.flop = 'As Tc Qd';
+       }
+       api.nextRound({ middle, pot});
+     };
+   })());
 
- onClick(document.getElementById("check"), () => api.check());
+   function apiMove(o) {
+     api.move(o.uci);
+     api.setClock(o.clock);
+   }
 
- onClick(document.getElementById("fold"), () => api.fold());
+   const clock = { times: 30, initial: 30 };
 
- function onClick(button, f) {
-   button.addEventListener('click', f);
- }
- 
-</script>
+   onClick(document.getElementById("raise"), () => apiMove({
+     uci: 'R10000',
+     clock
+   }));
+
+   onClick(document.getElementById("call"), () => apiMove({
+     uci: 'C1000',
+     clock
+   }));
+
+   onClick(document.getElementById("allin"), () => apiMove({
+     uci: 'A10000',
+     clock
+   }));
+
+   onClick(document.getElementById("check"), () => apiMove({
+     uci: 'H',
+     clock
+   }));
+
+   onClick(document.getElementById("fold"), () => apiMove({
+     uci: 'F',
+     clock
+   }));
+
+   function onClick(button, f) {
+     button.addEventListener('click', f);
+   }
+   
+  </script>
 
 </body>
 </html>

@@ -1,16 +1,16 @@
+import { readPlay as fenReadPlay } from './fen';
 
 export function configure(state, config) {
   merge(state, config);
 
   if (config.pov) {
     state.seats = config.pov.seats.length;
-
     state.players = config.pov.seats.filter(_=>_!==null).length;
   }
 
-  if (config.deal) {
-    state.firstToAct = config.deal.firstToAct;
-    state.button = config.deal.button;
+  if (config.fen) {
+    state.play = fenReadPlay(config.fen);
+    console.log(state.play);
   }
 
 }

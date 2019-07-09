@@ -2,38 +2,60 @@ import TWEEN from '@tweenjs/tween.js';
 
 import { configure } from './config';
 
+import { readMove as fenReadMove } from './fen';
+
 export default function start(ctrl, redraw) {
 
   return {
     set(config) {
-      anim((state) => configure(state, config), ctrl.data);
+      return anim((state) => configure(state, config), ctrl.data);
     },
     deal(o) {
-      anim(() => ctrl.deal(o), ctrl.data);
+      return anim(() => ctrl.deal(o), ctrl.data);
     },
     nextRound(o) {
-      anim(() => ctrl.nextRound(o), ctrl.data);
+      return anim(() => ctrl.nextRound(o), ctrl.data);
     },
     endRound(o) {
-      anim(() => ctrl.endRound(o), ctrl.data);
+      return anim(() => ctrl.endRound(o), ctrl.data);
     },
     showdown(o) {
-      anim(() => ctrl.showdown(o), ctrl.data);
+      return anim(() => ctrl.showdown(o), ctrl.data);
+    },
+    setClock(o) {
+      return anim(() => ctrl.setClock(o), ctrl.data);
+    },
+    move(uci) {
+      const move = fenReadMove(uci);
+      switch(move.act) {
+      case 'check':
+        return anim(() => ctrl.check(), ctrl.data);
+      case 'fold':
+        return anim(() => ctrl.fold(), ctrl.data);
+      case 'call':
+        return anim(() => ctrl.call(move.amount), ctrl.data);
+      case 'allin':
+        return anim(() => ctrl.allin(move.amount), ctrl.data);
+      case 'raise':
+        return anim(() => ctrl.raise(move.amount), ctrl.data);
+      default:
+        return Promise.reject("bad move");
+      }
     },
     check() {
-      anim(() => ctrl.check(), ctrl.data);
+      return anim(() => ctrl.check(), ctrl.data);
     },
     fold() {
-      anim(() => ctrl.fold(), ctrl.data);
+      return anim(() => ctrl.fold(), ctrl.data);
     },
     call(call) {
-      anim(() => ctrl.call(call), ctrl.data);
+      return anim(() => ctrl.call(call), ctrl.data);
     },
     allin(allin) {
-      anim(() => ctrl.allin(allin), ctrl.data);
+      return anim(() => ctrl.allin(allin), ctrl.data);
     },
     raise(raise) {
-      anim(() => ctrl.raise(raise), ctrl.data);
+      return anim(() => ctrl.raise(raise), ctrl.data);
     },
   };
 

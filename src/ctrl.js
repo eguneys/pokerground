@@ -1,22 +1,25 @@
 import { configure } from './config';
-
 import * as lens from './lens';
-
 import { trans } from './trans';
-
 import { makeSerialPromise } from './util';
-
 import { readMiddle, readHands } from './fen';
+import { ClockController } from './clock/clockCtrl';
 
 function callUserFunction(f, ...args) {
   if (f) setTimeout(() => f(...args), 1);
 }
 
 export default function Controller(state, redraw) {
-  this.data = state;
+  const d = this.data = state;
+
+  this.clock = new ClockController(this, {
+    onFlag: () => {
+      console.log('flag');
+    }
+  });
 
   const addAct = (act) => {
-    this.data.recentActs.push(act);
+    lens.recentActions(this).push(act);
   };
 
   const beginDeal = () => {
@@ -48,8 +51,7 @@ export default function Controller(state, redraw) {
         this.collectPots = false;
 
         this.data.pot = pot;
-        this.data.round = lens.nextRound(this);
-        this.data.recentActs = [];
+        lens.acts(this).unshift([]);
 
         redraw();
         resolve();
@@ -104,10 +106,13 @@ export default function Controller(state, redraw) {
     
   };
 
-  this.deal = (o) => {
-    configure(this.data, { deal: o });
+  this.deal = (button) => {
+    this.data.pot = 0;
+    this.data.middle = {};
+    this.data.showdown = undefined;
+    this.data.play.acts = [[]];
+    this.data.play.deal.button = button;
 
-    this.data.round = 'preflop';
     this.data.involved = lens.seatIndexes(this);
 
     return beginDeal();
@@ -119,7 +124,7 @@ export default function Controller(state, redraw) {
     return beginCollectPots(pot);
   };
 
-  this.showdown = ({ hands, pot, pots, middle }) => {
+  this.showdown = ({ hands, pots, middle, pot }) => {
     this.data.showdown = { pots, hands: readHands(hands) };
     this.data.middle = readMiddle(middle);
 
@@ -130,13 +135,13 @@ export default function Controller(state, redraw) {
     ]);
   };
 
-  this.endRound = ({ pot, pots }) => {
+  this.endRound = ({ pots, pot }) => {
     this.data.showdown = { pots, hands: {} };
 
-    beginCollectPots(pot)
+    return beginCollectPots(pot)
       .then(beginSharePots);
   };
-  
+
   this.check = () => {
     
     addAct({ 'act': 'check' });
@@ -158,9 +163,13 @@ export default function Controller(state, redraw) {
   };
 
   this.allin = (allin) => {
-    this.data.pov.seats[lens.toAct(this)].stack = 0;
+    this.data.play.stacks[lens.toAct(this)] = 0;
 
     addAct({ 'act': 'allin', amount: allin });
+  };
+
+  this.setClock = (o) => {
+    this.clock.setClock(this.data, o.times, o.initial);
   };
 
   this.trans = trans(state.i18n);

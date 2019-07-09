@@ -410,6 +410,7 @@ pg-table {
 .seats .seat img {
   width: 100%;
   height: auto;
+  margin-bottom: -5px;
   border-radius: 50%;
 }
 
@@ -421,9 +422,9 @@ pg-table {
 
 .seats .seat .timer {
   position: absolute;
-  top: -7px;
-  left: -7px;
-  width: calc(100% + 15px);
+  top: -12px;
+  left: -12px;
+  width: calc(100% + 24px);
   /* height: calc(100% + 16%); */
 }
 

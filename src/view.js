@@ -1,29 +1,25 @@
 import { h } from 'snabbdom';
 
 import { numbers, numberFormat, chipsFormat, currencyFormat } from './util';
+
+import { renderClock } from './clock/clockView';
+
 import * as util from './util';
 
 import * as lens from './lens';
 import * as icons from './icons';
 
 function renderSeat(ctrl, seat, index) {
+  const stack = seat ? lens.stack(ctrl, seat.idx):0;
+
   return (seat === null) ?
     h('div.seat.empty.'+numbers[index], [
       icons.sit
     ]) :
     h('div.seat.' + numbers[index], [
-      h('div.timer', [
-        h('svg', { attrs: { viewBox: '0 0 40 40' } }, [
-          h('circle.border', {
-            attrs: { cx: 20, cy: 20, r: 18, fill: 'none' }
-          }),
-          h('circle.bar', {
-            attrs: { cx: 20, cy: 20, r: 18, fill: 'none' }
-          })
-        ])
-      ]),
+      renderClock(ctrl, seat, seat.idx),
       h('img', { attrs: { src: seat.img } }),
-      h('span.stack', (seat.stack === 0) ? ctrl.trans('allin') : numberFormat(seat.stack) + ctrl.data.currency)
+      h('span.stack', (stack === 0) ? ctrl.trans('allin') : numberFormat(stack) + ctrl.data.currency)
     ]);
 }
 
@@ -42,9 +38,11 @@ const actionStyle = (ctrl, index) => ({
 });
 
 function renderAction(ctrl, type, index, klass, amount) {
+  const seatIndex = lens.toSeatIndex(ctrl, index);
+
   var content;
   amount = amount?numberFormat(amount) + ctrl.data.currency: undefined;
-  klass = '.' + numbers[index] + klass;
+  klass = '.' + numbers[seatIndex] + klass;
   switch (type) {
   case 'bigBlind':
     content = h('div.big-blind', [
@@ -82,34 +80,36 @@ function renderAction(ctrl, type, index, klass, amount) {
     break;
   }
   return h('div.action.' + klass, {
-    style: (ctrl.collectPots && type !== 'check') ? actionStyle(ctrl, index): ''
+    style: (ctrl.collectPots && type !== 'check') ? actionStyle(ctrl, seatIndex): ''
   }, content);
 }
 
 function renderActions(ctrl) {
-  var deal;
+  var deal = lens.deal(ctrl),
+      blinds = lens.blinds(ctrl);
   const actionsKlass = '';
   var content = [];
   const lastActionsWithIndex = lens.takeLastActionsWithIndex(ctrl);
 
-  if (ctrl.data.round === 'preflop') {
-    deal = ctrl.data.deal;
-    var indexes = lastActionsWithIndex.map(_=>lens.nextSeat(ctrl, lens.firstToAct(ctrl), _.i));
-    var containsBigBlind = indexes.some(_=>_===deal.bigBlind);
-    var containsSmallBlind = indexes.some(_=>_===deal.smallBlind);
-    if (!containsBigBlind) content.push(
-      renderAction(ctrl, 'bigBlind', deal.bigBlind, '', deal.blinds));
-    if (!containsSmallBlind)
+
+  if (lens.preflop(ctrl)) {
+    const bigBlindAction = lastActionsWithIndex.length >= ctrl.data.players;
+    const smallBlindAction = lastActionsWithIndex.length >= ctrl.data.players - 1;
+
+    if (!bigBlindAction)
       content.push(
-        renderAction(ctrl, 'smallBlind', deal.smallBlind, '', deal.blinds / 2));
+        renderAction(ctrl, 'bigBlind', lens.bigBlind(ctrl), '', blinds));
+    if (!smallBlindAction)
+      content.push(
+        renderAction(ctrl, 'smallBlind', lens.smallBlind(ctrl), '', blinds / 2));
   }
 
   content = [...content,
              ...lastActionsWithIndex.slice(0, -1)
              .map(({ action, i }) =>
-               renderAction(ctrl, action.act, lens.nextSeat(ctrl, lens.firstToAct(ctrl), i), '', action.amount)),
+               renderAction(ctrl, action.act, i, '', action.amount)),
              ...lastActionsWithIndex.slice(-1).map(({action, i}) =>
-               renderAction(ctrl, action.act, lens.nextSeat(ctrl, lens.firstToAct(ctrl), i), '.last', action.amount)
+               renderAction(ctrl, action.act, i, '.last', action.amount)
              )];
   
   return h('div.actions.' + actionsKlass, content);
@@ -145,7 +145,8 @@ function renderPots(ctrl) {
 }
 
 function renderButton(ctrl) {
-  var klass = numbers[ctrl.data.button];
+  const seatIndex = lens.toSeatIndex(ctrl, lens.button(ctrl));
+  var klass = numbers[seatIndex];
   
   return h('div.button.' + klass, 'D');
 }
@@ -164,17 +165,19 @@ const dealRotatingStyle = (() => {
   };
 })();
 
-const dealBackStyle = (ctrl, index, rotation) => ({
-  transform: util.translateDeal(ctrl.data.seats, index) + ' rotate(0deg)',
-  transition: 'transform .3s, opacity .3s',
-  delayed: {
-    transform: `translateX(0) translateY(0) rotate(${rotation}deg)`
-  },
-  remove: {
-    transform: util.translateDeal(ctrl.data.seats, index),
-    opacity: '0.2'
-  }
-});
+const dealBackStyle = (ctrl, index, rotation) => {
+  return {
+    transform: util.translateDeal(ctrl.data.seats, index) + ' rotate(0deg)',
+    transition: 'transform .3s, opacity .3s',
+    delayed: {
+      transform: `translateX(0) translateY(0) rotate(${rotation}deg)`
+    },
+    remove: {
+      transform: util.translateDeal(ctrl.data.seats, index),
+      opacity: '0.2'
+    }
+  };
+};
 
 
 
@@ -190,12 +193,13 @@ function renderHands(ctrl) {
       h('div.card.back')
     ]),
     ...ins.map(index => {
-      return h('div.hand.' + numbers[index], {}, [
+      const seatIndex = lens.toSeatIndex(ctrl, index);
+      return h('div.hand.' + numbers[seatIndex], {}, [
         (ctrl.dealProgress[index]>=1)?h('div.card.back', {
-          style: dealRotatingStyle(ctrl, index, 1)
+          style: dealRotatingStyle(ctrl, seatIndex, 1)
         }): null,
         (ctrl.dealProgress[index]==2)?h('div.card.back', {
-          style: dealRotatingStyle(ctrl, index, 2)
+          style: dealRotatingStyle(ctrl, seatIndex, 2)
         }): null
       ]);
     })
