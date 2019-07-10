@@ -10,6 +10,9 @@ export default function start(ctrl, redraw) {
     set(config) {
       return anim((state) => configure(state, config), ctrl.data);
     },
+    join(idx, o, stack) {
+      return anim(() => ctrl.join(idx, o, stack), ctrl.data);
+    },
     deal(o) {
       return anim(() => ctrl.deal(o), ctrl.data);
     },

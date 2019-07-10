@@ -33,6 +33,10 @@
          text-align: center;
      }
 
+     #controls > * {
+         margin-top: 4px;
+     }
+
      .deck {
          display: flex;
          margin: auto;
@@ -62,6 +66,8 @@
       <button id="raise">Raise</button>
       <button id="allin">AllIn</button>
       <button id="fold">Fold</button>
+      <br/>
+      <button id="join">Join</button>
     </div>
   </section>
 
@@ -73,47 +79,6 @@
       <div class="card ace spades"></div>
     </div>
   </section>
-
-  <script>
-   
-   function init() {
-     let pokerground;
-
-     const handlers = {
-       move(o) {
-       }
-     };
-
-     function makeConfig(data) {
-       return {
-         round: data.round,
-         deal: {
-           blinds: data.blinds,
-           button: data.button,
-           smallBlind: data.smallBlind,
-           bigBlind: data.bigBlind,
-           firstToAct: data.firstToAct
-         },
-         currency: data.currency,
-         pov: {
-           seats: data.seats
-         },
-         events: {
-         }
-       };
-     }
-
-     const server = new Pokerground.Server();
-     //const socket = new Pokerground.Socket(handlers);
-
-     // const data = server.get();
-
-     // pokerground = Pokerground(document.getElementById('app2'), makeConfig(data));
-   }
-
-
-   init();
-  </script>
 
   <script>
 
@@ -140,11 +105,11 @@
          times: 60,
        },
        pov: {
-         seats: [{img: 'https://i.pravatar.cc/300' },
-                 { img: 'https://i.pravatar.cc/300' },
+         seats: [{ img: 'https://i.pravatar.cc/300?1' },
+                 { img: 'https://i.pravatar.cc/300?2' },
                  null,
                  null,
-                 { img: 'https://i.pravatar.cc/300' }],
+                 { img: 'https://i.pravatar.cc/300?3' }],
          handIndexes: [0, 1, 4]
        },
        events: {
@@ -154,10 +119,21 @@
      //const server = new Pokerground.Server();
      //const socket = new Pokerground.Socket(handlers);
 
-     const api = Pokerground(document.getElementById('app'), config);
-
-     return api;
+     return Pokerground(document.getElementById('app'), config);
    }
+
+   const apiJoin = (() => {
+     const emptySeats = [2,3];
+
+     return function() {
+       if (emptySeats.length === 0) return;
+       api.join(emptySeats[0], { img: 'https://i.pravatar.cc/300?4' }, 10000);
+       emptySeats.shift();
+     }
+   })();
+   
+   onClick(document.getElementById("join"), apiJoin);
+
 
    var seatIndexes = [0,1,2];
    const clock = { times: 30, initial: 30, running: true };

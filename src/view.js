@@ -10,7 +10,7 @@ import * as lens from './lens';
 import * as icons from './icons';
 
 function renderSeat(ctrl, seat, index) {
-  const stack = seat ? lens.stack(ctrl, index):0;
+  const stack = lens.stack(ctrl, index);
 
   return (seat === null) ?
     h('div.seat.empty.'+numbers[index], [
@@ -19,7 +19,7 @@ function renderSeat(ctrl, seat, index) {
     h('div.seat.' + numbers[index], [
       renderClock(ctrl, seat, index),
       h('img', { attrs: { src: seat.img } }),
-      h('span.stack', (stack === 0) ? ctrl.trans('allin') : numberFormat(stack) + ctrl.data.currency)
+      h('span.stack', (stack === 0) ? ctrl.trans('allin') : (!stack) ? '' : numberFormat(stack) + ctrl.data.currency)
     ]);
 }
 
@@ -78,7 +78,7 @@ function renderAction(ctrl, type, index, klass, amount) {
     break;
   }
   return h('div.action.' + klass, {
-    style: (ctrl.collectPots && type !== 'check') ? actionStyle(ctrl, index): ''
+    style: (ctrl.anims.collectPots && type !== 'check') ? actionStyle(ctrl, index): ''
   }, content);
 }
 
@@ -124,7 +124,7 @@ function renderPots(ctrl) {
 
   var amount = ctrl.data.pot;
   
-  var sidePot = ctrl.shareProgress;
+  var sidePot = ctrl.anims.shareProgress;
 
   var mainContent = amount > 0 ? h('div.pot', [
     icons.chip,
@@ -183,6 +183,8 @@ function renderHands(ctrl) {
 
   var ins = lens.involved(ctrl);
 
+  var dealProgress = ctrl.anims.dealProgress;
+
   content = [
     h('div.hand.dealer', [
       h('div.card.back'),
@@ -191,10 +193,10 @@ function renderHands(ctrl) {
     ]),
     ...ins.map(index => {
       return h('div.hand.' + numbers[index], {}, [
-        (ctrl.dealProgress[index]>=1)?h('div.card.back', {
+        (dealProgress && dealProgress[index]>=1)?h('div.card.back', {
           style: dealRotatingStyle(ctrl, index, 1)
         }): null,
-        (ctrl.dealProgress[index]==2)?h('div.card.back', {
+        (dealProgress && dealProgress[index]==2)?h('div.card.back', {
           style: dealRotatingStyle(ctrl, index, 2)
         }): null
       ]);
@@ -223,27 +225,25 @@ function renderMiddle(ctrl) {
       turn,
       river;
   var middle = ctrl.data.middle;
-
-  var revealFlop = !ctrl.hideFlop && middle.flop,
-      revealTurn = !ctrl.hideTurn && middle.turn,
-      revealRiver = !ctrl.hideRiver && middle.river;
+  var revealFlop = !ctrl.anims.hideFlop && middle.flop,
+      revealTurn = !ctrl.anims.hideTurn && middle.turn,
+      revealRiver = !ctrl.anims.hideRiver && middle.river;
 
   var highlightHand,
       hand,
-      pot = ctrl.shareProgress;
+      pot = ctrl.anims.shareProgress;
 
   if (pot) {
     hand = lens.showdownHands(ctrl)[pot.involved[0]];
     highlightHand = hand && hand.hand;
   }
 
-
   flop = revealFlop?middle.flop.map((flop, i) => h('div.flop', renderMiddleCard(flop, highlightHand))):[1,2,3].map(_ => h('div.flop'));
   turn = h('div.turn', revealTurn?renderMiddleCard(middle.turn, highlightHand):[]);
   river = h('div.river', revealRiver?renderMiddleCard(middle.river, highlightHand):[]);
 
   content = [...content, ...flop, turn, river];
-  
+
   return h('div.middle', content);
 }
 
@@ -253,7 +253,7 @@ function renderHoles(ctrl) {
 
   var highlightHand,
       hand,
-      pot = ctrl.shareProgress;
+      pot = ctrl.anims.shareProgress;
 
   if (pot) {
     hand = lens.showdownHands(ctrl)[pot.involved[0]];
@@ -276,7 +276,7 @@ function renderHoles(ctrl) {
 }
 
 function renderShareHandValue(ctrl) {
-  var pot = ctrl.shareProgress;
+  var pot = ctrl.anims.shareProgress;
   var content;
   if (pot) {
     var index = pot.involved[0];
@@ -296,7 +296,7 @@ function renderCards(ctrl) {
     renderButton(ctrl),
     ...renderHands(ctrl),
     renderMiddle(ctrl),
-    ...renderHoles(ctrl),
+    h('div.holes', renderHoles(ctrl)),
     renderShareHandValue(ctrl)
   ];
   return h('div.cards', content);

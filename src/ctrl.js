@@ -12,6 +12,10 @@ function callUserFunction(f, ...args) {
 export default function Controller(state, redraw) {
   const d = this.data = state;
 
+  this.anims = {
+    unbinds: []
+  };
+
   this.clock = new ClockController(this, {
     onFlag: () => {
       console.log('flag');
@@ -22,71 +26,85 @@ export default function Controller(state, redraw) {
     lens.recentActions(this).push(act);
   };
 
+  const unbindableTimeout = (f, delay, reject) => {
+    var unbinds = this.anims.unbinds;
+    var unbind;
+    var id = setTimeout(() => {
+      unbinds.slice(unbinds.indexOf(unbind), 1);
+      f();
+    }, delay);
+    unbind = () => {
+      clearTimeout(id);
+      reject("Animation cancelled!");
+    };
+    unbinds.push(unbind);
+  };
+
   const beginDelay = (delay = 1000) => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, delay);
+    return new Promise((resolve, reject) => {
+      unbindableTimeout(resolve, delay, reject);
     });
   };
 
   const beginDeal = () => {
-    this.dealProgress = {};
+    this.anims.dealProgress = {};
 
     var serialPromise = makeSerialPromise();
     
     return this.data.involved.reduce((acc, i) => {
-      return serialPromise(resolve => {
+      return serialPromise((resolve, reject) => {
         redraw();
-        setTimeout(() => {
-          this.dealProgress[i] = 1;
+        unbindableTimeout(() => {
+          this.anims.dealProgress[i] = 1;
           redraw();
-          setTimeout(() => {
-            this.dealProgress[i] = 2;
+          unbindableTimeout(() => {
+            this.anims.dealProgress[i] = 2;
             redraw();
             resolve();
-          }, 300);
-        }, 300);
+          }, 300, reject);
+        }, 300, reject);
       });
     }, Promise.resolve());
   };
 
   const beginCollectPots = (pot) => {
-    this.collectPots = true;
+    this.anims.collectPots = true;
 
-    return new Promise(resolve => {
-      setTimeout(() => {
-        this.collectPots = false;
+    return new Promise((resolve, reject) => {
+      unbindableTimeout(() => {
+        this.anims.collectPots = false;
 
         this.data.pot = pot;
         lens.acts(this).unshift([]);
 
         redraw();
         resolve();
-      }, 500);
+      }, 500, reject);
     });
   };
 
   const beginRevealCards = () => {
-    this.hideFlop = !lens.seenRound(this, 'flop');
-    this.hideTurn = !lens.seenRound(this, 'turn');
-    this.hideRiver = !lens.seenRound(this, 'river');
+    this.anims.hideFlop = !lens.seenRound(this, 'flop');
+    this.anims.hideTurn = !lens.seenRound(this, 'turn');
+    this.anims.hideRiver = !lens.seenRound(this, 'river');
     
     
-    return new Promise(resolve => {
-      setTimeout(() => {
-        this.hideFlop = false;
+    return new Promise((resolve, reject) => {
+      unbindableTimeout(() => {
+        this.anims.hideFlop = false;
         redraw();
-        setTimeout(() => {
-          this.hideTurn = false;
+        unbindableTimeout(() => {
+          this.anims.hideTurn = false;
           redraw();
-          setTimeout(() => {
-            this.hideRiver = false;
+          unbindableTimeout(() => {
+            this.anims.hideRiver = false;
             redraw();
-            setTimeout(() => {
+            unbindableTimeout(() => {
               resolve();
-            }, 1000);
-          }, 2000);
-        }, this.hideTurn?2000:0);
-      }, this.hideFlop?1000:0);
+            }, 1000, reject);
+          }, 2000, reject);
+        }, this.anims.hideTurn?2000:0, reject);
+      }, this.anims.hideFlop?1000:0, reject);
     });
   };
 
@@ -96,24 +114,23 @@ export default function Controller(state, redraw) {
     var serialPromise = makeSerialPromise();
 
     return pots.slice(0).reverse().reduce((acc, pot) => {
-      return serialPromise(resolve => {
-        setTimeout(() => {
-          this.shareProgress = pot;
+      return serialPromise((resolve, reject) => {
+        unbindableTimeout(() => {
+          this.anims.shareProgress = pot;
           this.data.pot -= pot.amount;
           redraw();
-          setTimeout(() => {
-            this.shareProgress = undefined;
+          unbindableTimeout(() => {
+            this.anims.shareProgress = undefined;
             redraw();
             resolve();
-          }, 1000);
-        }, 500);
+          }, 1000, reject);
+        }, 500, reject);
       });
-    }, Promise.resolve())
-      .then(() => {
-        this.data.involved = [];
-        redraw();
-      });
-    
+    }, Promise.resolve());    
+  };
+
+  this.join = (idx, o, stack) => {
+    this.data.pov.seats[idx] = o;
   };
 
   this.deal = (button) => {
@@ -129,6 +146,8 @@ export default function Controller(state, redraw) {
     // redraw();
 
     this.data.involved = lens.handIndexes(this);
+
+    this.clearAnims();
 
     return beginDeal();
   };
@@ -187,7 +206,9 @@ export default function Controller(state, redraw) {
   };
 
   this.allin = (allin) => {
-    this.data.play.stacks[lens.toAct(this)] = 0;
+    var handIndex = lens.handIndexes(this)
+        .indexOf(lens.toAct(this));
+    this.data.play.stacks[handIndex] = 0;
 
     addAct({ 'act': 'allin', amount: allin });
   };
@@ -223,6 +244,14 @@ export default function Controller(state, redraw) {
 
   this.clearClock = () => {
     this.clock.setClock({});
+  };
+
+  this.clearAnims = () => {
+    this.anims.unbinds.forEach(_ => _());
+
+    this.anims = {
+      unbinds: []
+    };
   };
 
   this.trans = trans(state.i18n);
