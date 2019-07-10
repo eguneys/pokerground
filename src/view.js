@@ -10,14 +10,14 @@ import * as lens from './lens';
 import * as icons from './icons';
 
 function renderSeat(ctrl, seat, index) {
-  const stack = seat ? lens.stack(ctrl, seat.idx):0;
+  const stack = seat ? lens.stack(ctrl, index):0;
 
   return (seat === null) ?
     h('div.seat.empty.'+numbers[index], [
       icons.sit
     ]) :
     h('div.seat.' + numbers[index], [
-      renderClock(ctrl, seat, seat.idx),
+      renderClock(ctrl, seat, index),
       h('img', { attrs: { src: seat.img } }),
       h('span.stack', (stack === 0) ? ctrl.trans('allin') : numberFormat(stack) + ctrl.data.currency)
     ]);
@@ -38,11 +38,9 @@ const actionStyle = (ctrl, index) => ({
 });
 
 function renderAction(ctrl, type, index, klass, amount) {
-  const seatIndex = lens.toSeatIndex(ctrl, index);
-
   var content;
   amount = amount?numberFormat(amount) + ctrl.data.currency: undefined;
-  klass = '.' + numbers[seatIndex] + klass;
+  klass = '.' + numbers[index] + klass;
   switch (type) {
   case 'bigBlind':
     content = h('div.big-blind', [
@@ -80,7 +78,7 @@ function renderAction(ctrl, type, index, klass, amount) {
     break;
   }
   return h('div.action.' + klass, {
-    style: (ctrl.collectPots && type !== 'check') ? actionStyle(ctrl, seatIndex): ''
+    style: (ctrl.collectPots && type !== 'check') ? actionStyle(ctrl, index): ''
   }, content);
 }
 
@@ -145,8 +143,7 @@ function renderPots(ctrl) {
 }
 
 function renderButton(ctrl) {
-  const seatIndex = lens.toSeatIndex(ctrl, lens.button(ctrl));
-  var klass = numbers[seatIndex];
+  var klass = numbers[lens.button(ctrl)];
   
   return h('div.button.' + klass, 'D');
 }
@@ -193,13 +190,12 @@ function renderHands(ctrl) {
       h('div.card.back')
     ]),
     ...ins.map(index => {
-      const seatIndex = lens.toSeatIndex(ctrl, index);
-      return h('div.hand.' + numbers[seatIndex], {}, [
+      return h('div.hand.' + numbers[index], {}, [
         (ctrl.dealProgress[index]>=1)?h('div.card.back', {
-          style: dealRotatingStyle(ctrl, seatIndex, 1)
+          style: dealRotatingStyle(ctrl, index, 1)
         }): null,
         (ctrl.dealProgress[index]==2)?h('div.card.back', {
-          style: dealRotatingStyle(ctrl, seatIndex, 2)
+          style: dealRotatingStyle(ctrl, index, 2)
         }): null
       ]);
     })
@@ -266,10 +262,9 @@ function renderHoles(ctrl) {
 
   if (sd) {
     content = [
-      ...content, ...Object.keys(sd.hands).map(index => {
-        var { hole } = sd.hands[index];
-        var seatIndex = lens.toSeatIndex(ctrl, parseInt(index));
-      
+      ...content, ...Object.keys(sd.hands).map(idx => {
+        var { hole } = sd.hands[idx];
+        var seatIndex = lens.handIndexes(ctrl)[idx];
         return h('div.hole.' + numbers[seatIndex],
                  hole.map(hole =>
                    h('div', renderMiddleCard(hole, highlightHand))));

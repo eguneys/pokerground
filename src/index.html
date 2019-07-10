@@ -140,11 +140,12 @@
          times: 60,
        },
        pov: {
-         seats: [{img: 'https://i.pravatar.cc/300', idx: 0 },
-                 { img: 'https://i.pravatar.cc/300', idx: 1 },
+         seats: [{img: 'https://i.pravatar.cc/300' },
+                 { img: 'https://i.pravatar.cc/300' },
                  null,
                  null,
-                 { img: 'https://i.pravatar.cc/300', idx: 2 }]
+                 { img: 'https://i.pravatar.cc/300' }],
+         handIndexes: [0, 1, 4]
        },
        events: {
        }
@@ -298,8 +299,8 @@
 
    onClick(document.getElementById("fold"), () => apiMove({
      uci: 'F',
-     clock,
-     end: true
+     clock
+     // end: true
    }));
 
    function onClick(button, f) {

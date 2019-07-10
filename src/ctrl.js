@@ -37,7 +37,6 @@ export default function Controller(state, redraw) {
       return serialPromise(resolve => {
         redraw();
         setTimeout(() => {
-          lens.seatIndexes(this);
           this.dealProgress[i] = 1;
           redraw();
           setTimeout(() => {
@@ -129,31 +128,39 @@ export default function Controller(state, redraw) {
     // this.data.involved = [];
     // redraw();
 
-    this.data.involved = lens.seatIndexes(this);
+    this.data.involved = lens.handIndexes(this);
 
     return beginDeal();
   };
 
   this.nextRound = ({ middle, pot }) => {
-    this.data.middle = readMiddle(middle) || {};
+    this.clearClock();
 
     return beginCollectPots(pot)
-      .then(beginDelay);
+      .then(() => beginDelay(1500))
+      .then(() => {
+        this.data.middle = readMiddle(middle) || {};
+        redraw();
+      }).then(beginDelay);
   };
 
   this.showdown = ({ hands, pots, middle, pot }) => {
     this.data.showdown = { pots, hands: readHands(hands) };
-    this.data.middle = readMiddle(middle);
 
-    return Promise.all([
-      beginCollectPots(pot),
-      beginRevealCards()
-        .then(beginSharePots)
-    ]);
+    this.clearClock();
+
+    return beginCollectPots(pot)
+      .then(() => beginDelay(1500))
+      .then(() => {
+        this.data.middle = readMiddle(middle);
+      }).then(beginRevealCards)
+      .then(beginSharePots);
   };
 
   this.endRound = ({ pots, pot }) => {
     this.data.showdown = { pots, hands: {} };
+
+    this.clearClock();
 
     return beginCollectPots(pot)
       .then(beginSharePots);

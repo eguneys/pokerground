@@ -25,7 +25,8 @@ export function seats(ctrl) {
 }
 
 export function stack(ctrl, idx) {
-  return ctrl.data.play.stacks[idx];
+  const handIndex = handIndexes(ctrl).indexOf(idx);
+  return ctrl.data.play.stacks[handIndex];
 }
 
 export function acts(ctrl) {
@@ -45,7 +46,7 @@ export function deal(ctrl) {
 }
 
 export function button(ctrl) {
-  return deal(ctrl).button;
+  return handIndexes(ctrl)[deal(ctrl).button];
 }
 
 export function smallBlind(ctrl) {
@@ -63,24 +64,14 @@ function firstToAct(ctrl) {
   return preflop(ctrl) ? firstToActOnPreflop : firstToActOnFlop;
 }
 
-export function toSeatIndex(ctrl, index) {
-  return seats(ctrl).indexOf(seats(ctrl).find(seat => seat && seat.idx === index));
+export function handIndexes(ctrl) {
+  return ctrl.data.pov.handIndexes;
 }
 
-export function seatIndexes(ctrl) {
-  return seats(ctrl).reduce((acc, seat) => {
-    if (seat != null) {
-      acc.push(seat.idx);
-    }
-    return acc;
-  }, []);
-}
-
-export function nextSeat(ctrl, from, i) {
-  var indexes = seatIndexes(ctrl);
-  var to = indexes[(indexes.indexOf(from) + i) % indexes.length];
-
-  return to;
+function nextSeat(ctrl, fromSeat, i) {
+  var fromI = handIndexes(ctrl).indexOf(fromSeat);
+  var to = (fromI + i) % handIndexes(ctrl).length;
+  return handIndexes(ctrl)[to];
 }
 
 export function recentActionsWithIndex(ctrl) {
@@ -101,7 +92,7 @@ export function recentActionsWithIndex(ctrl) {
       next: nextIndex(acc.involved, acc.next)
     };
   }, { actions: [],
-       involved: seatIndexes(ctrl),
+       involved: handIndexes(ctrl),
        next: firstToAct(ctrl)
      });
 }
