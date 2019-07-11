@@ -2,7 +2,7 @@ import { configure } from './config';
 import * as lens from './lens';
 import { trans } from './trans';
 import { makeSerialPromise } from './util';
-import { readMiddle, readHands } from './fen';
+import { readMiddle, readHands, readPlay } from './fen';
 import { ClockController } from './clock/clockCtrl';
 
 function callUserFunction(f, ...args) {
@@ -88,7 +88,6 @@ export default function Controller(state, redraw) {
     this.anims.hideTurn = !lens.seenRound(this, 'turn');
     this.anims.hideRiver = !lens.seenRound(this, 'river');
     
-    
     return new Promise((resolve, reject) => {
       unbindableTimeout(() => {
         this.anims.hideFlop = false;
@@ -133,12 +132,18 @@ export default function Controller(state, redraw) {
     this.data.pov.seats[idx] = o;
   };
 
-  this.deal = (button) => {
+  this.leave = (idx) => {
+    this.data.pov.seats[idx] = null;
+  };
+
+  this.deal = (fen, handIndexes) => {
     this.data.pot = 0;
     this.data.middle = {};
     this.data.showdown = undefined;
-    this.data.play.acts = [[]];
-    this.data.play.deal.button = button;
+
+    this.data.play = readPlay(fen);
+
+    this.data.pov.handIndexes = handIndexes;
 
     // some kind of bug on snabbdom doesnt remove dealt cards
     // https://github.com/snabbdom/snabbdom/issues/440
@@ -197,23 +202,22 @@ export default function Controller(state, redraw) {
     addAct({ 'act': 'fold' });
   };
 
-  this.call = (call) => {
+  this.call = (call, stack) => {
+    lens.setStack(this, stack);
     addAct({ 'act': 'call', amount: call });
   };
 
-  this.raise = (raise) => {
+  this.raise = (raise, stack) => {
+    lens.setStack(this, stack);
     addAct({ 'act': 'raise', amount: raise });
   };
 
   this.allin = (allin) => {
-    var handIndex = lens.handIndexes(this)
-        .indexOf(lens.toAct(this));
-    this.data.play.stacks[handIndex] = 0;
-
+    lens.setStack(this, 0);
     addAct({ 'act': 'allin', amount: allin });
   };
 
-  this.move = (move) => {
+  this.move = (move, stack) => {
     let lp;
     switch(move.act) {
     case 'check':
@@ -223,13 +227,13 @@ export default function Controller(state, redraw) {
       lp = this.fold();
       break;
     case 'call':
-      lp = this.call(move.amount);
+      lp = this.call(move.amount, stack);
       break;
     case 'allin':
       lp = this.allin(move.amount);
       break;
     case 'raise':
-      lp = this.raise(move.amount);
+      lp = this.raise(move.amount, stack);
       break;
     default:
       lp = Promise.reject("bad move");

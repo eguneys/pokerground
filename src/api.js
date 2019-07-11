@@ -10,11 +10,14 @@ export default function start(ctrl, redraw) {
     set(config) {
       return anim((state) => configure(state, config), ctrl.data);
     },
-    join(idx, o, stack) {
-      return anim(() => ctrl.join(idx, o, stack), ctrl.data);
+    join(idx, o) {
+      return anim(() => ctrl.join(idx, o), ctrl.data);
     },
-    deal(o) {
-      return anim(() => ctrl.deal(o), ctrl.data);
+    leave(idx) {
+      return anim(() => ctrl.leave(idx), ctrl.data);
+    },
+    deal(o, handIndexes) {
+      return anim(() => ctrl.deal(o, handIndexes), ctrl.data);
     },
     nextRound(o) {
       return anim(() => ctrl.nextRound(o), ctrl.data);
@@ -28,9 +31,9 @@ export default function start(ctrl, redraw) {
     setClock(o) {
       return anim(() => ctrl.setClock(o), ctrl.data);
     },
-    move(uci) {
+    move(uci, stack) {
       const move = fenReadMove(uci);
-      return anim(() => ctrl.move(move), ctrl.data);
+      return anim(() => ctrl.move(move, stack), ctrl.data);
     },
     check() {
       return anim(() => ctrl.check(), ctrl.data);

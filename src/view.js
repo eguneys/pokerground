@@ -25,7 +25,6 @@ function renderSeat(ctrl, seat, index) {
 
 function renderSeats(ctrl) {
   var seats = lens.seats(ctrl);
-
   return h('div.seats', seats.map((seat, i) => renderSeat(ctrl, seat, i)));
 }
 
@@ -191,7 +190,7 @@ function renderHands(ctrl) {
       h('div.card.back'),
       h('div.card.back')
     ]),
-    ...ins.map(index => {
+    h('div.hands', ins.map(index => {
       return h('div.hand.' + numbers[index], {}, [
         (dealProgress && dealProgress[index]>=1)?h('div.card.back', {
           style: dealRotatingStyle(ctrl, index, 1)
@@ -200,7 +199,7 @@ function renderHands(ctrl) {
           style: dealRotatingStyle(ctrl, index, 2)
         }): null
       ]);
-    })
+    }))
   ];
 
   return content;

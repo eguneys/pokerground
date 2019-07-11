@@ -28,8 +28,11 @@ export function ClockController(ctrl, opts) {
     
     scheduleTick(millis);
 
-    if (millis === 0) this.opts.onFlag();
-    else updateElements(this, this.elements[index], millis);
+    if (millis === 0) {
+      this.opts.onFlag();
+    } else if (this.elements[index]) {
+      updateElements(this, this.elements[index], millis);
+    }
   };
 
 

@@ -68,6 +68,7 @@
       <button id="fold">Fold</button>
       <br/>
       <button id="join">Join</button>
+      <button id="leave">Leave</button>
     </div>
   </section>
 
@@ -127,13 +128,24 @@
 
      return function() {
        if (emptySeats.length === 0) return;
-       api.join(emptySeats[0], { img: 'https://i.pravatar.cc/300?4' }, 10000);
+       api.join(emptySeats[0], { img: 'https://i.pravatar.cc/300?4' });
        emptySeats.shift();
+     }
+   })();
+
+   const apiLeave = (() => {
+     const fullSeats = [1, 2, 3, 4, 0];
+
+     return function() {
+       if (fullSeats.length === 0) return;
+       api.leave(fullSeats[0]);
+       fullSeats.shift();
      }
    })();
    
    onClick(document.getElementById("join"), apiJoin);
 
+   onClick(document.getElementById("leave"), apiLeave);
 
    var seatIndexes = [0,1,2,3, 4];
    const clock = { times: 30, initial: 30, running: true };
@@ -145,14 +157,27 @@
    };
 
    const apiDeal = (() => {
-     var nextIndex = (from) => {
-       return (from + 1) % seatIndexes.length;
-     };
-     var button = 0;
+     var fens = [
+       { fen: '60b 40s 100B 100, 100!20(. 5 10 . .)~10!0\n',
+         handIndexes: [0, 1, 2, 3, 4] },
+       { fen: '70 50b 100s 100B, 100!20(. . 5 10 .)~10!0\n',
+         handIndexes: [1,2,3,4,0] },
+       { fen: '70 50 100b 100B!20(. . 5 10)~10!0\n',
+         handIndexes: [0,1,2,3] },
+       { fen: '70B, 100b!20(10 5)~10!0\n',
+         handIndexes: [0, 1] },
+       { fen : '70s 100b!20(5 10 . . .)~10!0\n',
+         handIndexes: [1, 0] }
+     ];
+     function nextFen(fen) {
+       return fens[(fens.indexOf(fen) + 1) % fens.length];
+     }
+     var fen = fens[0];
+     
      return function() {
-       button = nextIndex(button);
+       fen = nextFen(fen);
        return Promise.all([
-         api.deal(button),
+         api.deal(fen.fen, fen.handIndexes),
          api.setClock(clock)
        ]);
      }
@@ -183,11 +208,11 @@
          [seatIndexes[2]]: { hole: '2c 3c', rank: 'highcard', hand: 'As Qd Tc 3c 2c' }
        },
        pots: [
-         { amount: 1500, involved: [seatIndexes[1]]},
-         { amount: 5000, involved: [seatIndexes[0], seatIndexes[2], seatIndexes[1]]},
-         { amount: 1500, involved: [seatIndexes[1]]},
-         { amount: 1500, involved: [seatIndexes[2]]},
-         { amount: 1500, involved: [seatIndexes[0]]},
+         /* { amount: 1500, involved: [seatIndexes[1]]},
+          * { amount: 5000, involved: [seatIndexes[0], seatIndexes[2], seatIndexes[1]]},
+          * { amount: 1500, involved: [seatIndexes[1]]},
+          * { amount: 1500, involved: [seatIndexes[2]]},
+          * { amount: 1500, involved: [seatIndexes[0]]}, */
          { amount: 5000, involved: [seatIndexes[0], seatIndexes[2]]}],
        pot: 16000
      };
@@ -222,7 +247,7 @@
    })();
 
    function apiMove(o) {
-     let lastPromise = api.move(o.uci);
+     let lastPromise = api.move(o.uci, o.stack);
      if (o.next) {
        lastPromise = lastPromise.then(apiNextRound);
      }
@@ -251,12 +276,14 @@
 
    onClick(document.getElementById("raise"), () => apiMove({
      uci: 'R10000',
+     stack: 9000,
      clock
    }));
 
    onClick(document.getElementById("call"), () => {
      apiMove({
        uci: 'C1000',
+       stack: 9000,
        clock,
        next: true
      })

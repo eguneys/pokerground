@@ -24,6 +24,12 @@ export function seats(ctrl) {
   return ctrl.data.pov.seats;
 }
 
+export function setStack(ctrl, stack) {
+  var handIndex = handIndexes(ctrl)
+      .indexOf(toAct(ctrl));
+  ctrl.data.play.stacks[handIndex] = stack;
+}
+
 export function stack(ctrl, idx) {
   const handIndex = handIndexes(ctrl).indexOf(idx);
   return ctrl.data.play.stacks[handIndex];

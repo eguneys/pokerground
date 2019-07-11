@@ -100,7 +100,7 @@ export function readPlay(play) {
   play = play.split('\n');
   const stackspot = play[0].split('!');
 
-  const acts = play.slice(1).map(_ => _.split(' ').map(readAct));
+  const acts = play.slice(1).map(_ => _===''?[]:_.split(' ').map(readAct));
 
   const stacks = stackspot[0].split(' ').map(readStack);
   const pots = readPots(stackspot[1]);
