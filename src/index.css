@@ -33,7 +33,7 @@ pg-table {
 
 .pots .pot {
   position: absolute;
-  bottom: 70%;
+  bottom: 64%;
   left: 50%;
   padding: 0 10px 0 0px;
   color: white;
@@ -118,7 +118,7 @@ pg-table {
   position: absolute;
   bottom: 50%;
   left: 50%;
-  transform: translateX(-50%) perspective(40em) rotateX(40deg);
+  transform: translateY(25%) translateX(-50%) perspective(40em) rotateX(40deg);
   height: 16%;
   width: 44%;
   display: flex;
@@ -155,8 +155,8 @@ pg-table {
 }
 
 .cards .hand {
-  height: 10%;
-  width: 10%;
+  height: 8%;
+  width: 8%;
   position: absolute;
 }
 
@@ -174,37 +174,41 @@ pg-table {
 }
 
 .cards .hand.dealer {
-  bottom: 77%;
+  bottom: 70%;
   left: 50%;
 }
 
 .five .cards .hand.one {
-  bottom: 42%;
+  bottom: 28%;
   left: 50%;
 }
 .five .cards .hand.two {
-  bottom: 50%;
+  bottom: 32%;
   left: 25%;
+  transform: rotate(40deg);
 }
 .five .cards .hand.three {
-  bottom: 63%;
-  left: 28%;
+  bottom: 66%;
+  left: 30%;
+  transform: rotate(-40deg);
 }
 .five .cards .hand.four {
-  bottom: 63%;
-  left: 72%;
+  bottom: 60%;
+  left: 68%;
+  transform: rotate(30deg);
 }
 .five .cards .hand.five {
-  bottom: 50%;
-  left: 75%;
+  bottom: 36%;
+  left: 70%;
+  transform: rotate(-40deg);
 }
 
 .five .cards .button.one {
-  bottom: 42%;
+  bottom: 32%;
   left: 50%;
 }
 .five .cards .button.two {
-  bottom: 50%;
+  bottom: 40%;
   left: 25%;
 }
 .five .cards .button.three {
@@ -216,8 +220,8 @@ pg-table {
   left: 72%;
 }
 .five .cards .button.five {
-  bottom: 50%;
-  left: 75%;
+  bottom: 40%;
+  left: 80%;
 }
 
 
@@ -234,6 +238,8 @@ pg-table {
   display: flex;
   justify-content: center;
 
+  z-index: 2;
+
   min-width: 20%;
 
   font-size: 1.2em;
@@ -244,11 +250,11 @@ pg-table {
 }
 
 .five .actions .action.one {
-  bottom: 42%;
+  bottom: 30%;
   left: 50%;
 }
 .five .actions .action.two {
-  bottom: 50%;
+  bottom: 40%;
   left: 25%;
 }
 .five .actions .action.three {
@@ -260,7 +266,7 @@ pg-table {
   left: 72%;
 }
 .five .actions .action.five {
-  bottom: 50%;
+  bottom: 40%;
   left: 75%;
 }
 
@@ -353,27 +359,27 @@ pg-table {
 
 .five .seats .seat.one,
 .five .cards .hole.one {
-  bottom: 18%;
+  bottom: 8%;
   left: 50%;
 }
 .five .seats .seat.two,
 .five .cards .hole.two {
-  bottom: 28%;
+  bottom: 18%;
   left: 20%;
 }
 .five .seats .seat.three,
 .five .cards .hole.three {
-  bottom: 70%;
+  bottom: 75%;
   left: 28%;
 }
 .five .seats .seat.four,
 .five .cards .hole.four {
-  bottom: 70%;
+  bottom: 75%;
   left: 72%;
 }
 .five .seats .seat.five,
 .five .cards .hole.five {
-  bottom: 28%;
+  bottom: 18%;
   left: 80%;
 }
 

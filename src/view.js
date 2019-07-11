@@ -154,7 +154,7 @@ const dealRotatingStyle = (() => {
 
   return (ctrl, index, hand) => {
     if (!rotations[index+" "+hand]) {
-      rotations[index+" "+hand] = (hand==2)?Math.random() * 30: Math.random() * 10;
+      rotations[index+" "+hand] = (hand==2)?Math.random() * 30: Math.random() * 5;
     }
     var rotation = rotations[index+" "+hand];
 

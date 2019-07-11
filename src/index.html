@@ -98,7 +98,7 @@
 
      var config = {
        currency: '$',
-       fen: '70b 50B 100!20(30 50 .)~10!0\nR20 R20',
+       fen: '70b 50B 100 100, 100!20(30 50 . . .)~10!0\nR20 R20',
        clock: {
          running: true,
          initial: 60,
@@ -107,10 +107,10 @@
        pov: {
          seats: [{ img: 'https://i.pravatar.cc/300?1' },
                  { img: 'https://i.pravatar.cc/300?2' },
-                 null,
-                 null,
+                 { img: 'https://i.pravatar.cc/300?2' },
+                 { img: 'https://i.pravatar.cc/300?2' },
                  { img: 'https://i.pravatar.cc/300?3' }],
-         handIndexes: [0, 1, 4]
+         handIndexes: [0, 1, 2, 3, 4]
        },
        events: {
        }
@@ -135,7 +135,7 @@
    onClick(document.getElementById("join"), apiJoin);
 
 
-   var seatIndexes = [0,1,2];
+   var seatIndexes = [0,1,2,3, 4];
    const clock = { times: 30, initial: 30, running: true };
    
    const apiDelay = (delay = 1000) => {

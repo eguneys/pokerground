@@ -29,15 +29,18 @@ export const numberFormat = (function() {
 export const numbers = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 
 export function translateDeal(seats, index) {
-  var translateMapNine = [
+  const translateMapNine = [
   ];
 
-  var translateMapFive = [
-    [0, -400],
-    [600, -300],
-    [-600, -300],
-    [-600, -300],
-    [-600, -300]
+  const dealX = 0,
+        dealY = 600;
+
+  const translateMapFive = [
+    [dealX, -dealY],
+    [dealX + 120, -dealY-100],
+    [dealX + 500, 220],
+    [dealX - 520, 120],
+    [dealX - 20, -dealY-100]
   ];
   
   var translate = (seats === 5) ? translateMapFive[index]:translateMapNine[index];
@@ -49,12 +52,15 @@ export function translatePots(seats, index, reverse) {
   var translateMapNine = [
   ];
 
+  const dealX = 0,
+        dealY = 400;
+
   var translateMapFive = [
-    [0, -580],
-    [130, -480],
-    [130, -480],
-    [-130, -480],
-    [-130, -480]
+    [dealX, -dealY-260],
+    [dealX + 130, -dealY-60],
+    [dealX + 110, dealY-400],
+    [dealX - 110, dealY-400],
+    [dealX - 130, -dealY-60]
   ];
 
   var multiply = reverse ? -1 : 1;
