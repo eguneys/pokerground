@@ -236,8 +236,6 @@ pg-table {
 .actions .action {
   position: absolute;
   display: flex;
-  justify-content: center;
-
   z-index: 2;
 
   min-width: 20%;
@@ -246,7 +244,6 @@ pg-table {
   color: white;
 
   text-align: center;
-  transform: translateX(-50%);
 }
 
 .five .actions .action.one {
@@ -270,27 +267,13 @@ pg-table {
   left: 75%;
 }
 
-.action .small-blind,
-.action .big-blind,
-.action .raise,
-.action .allin {
-  padding-right: 12px;
-  color: rgba(240, 255, 0, 1);
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 20px;
-}
-
 .action .call {
   padding-right: 12px;
   color: rgba(34, 167, 240, 1);
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 20px;
 }
 
 .action .fold {
   color: rgba(217, 30, 24, 1);
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 20px;  
 }
 
 .action i {
@@ -298,41 +281,81 @@ pg-table {
   font-weight: bold;
 }
 
-.action .small-blind i,
-.action .big-blind i,
-.action .raise i,
-.action .allin i  {
+.action.small-blind i,
+.action.big-blind i,
+.action.raise i,
+.action.allin i  {
   padding: 2px 8px;
   margin-right: 4px;
   background: rgba(240, 255, 0, 1);
   color: black;
 }
 
-.action .fold i {
+.action.fold i {
   padding: 2px 8px;
   background: rgba(217, 30, 24, 1);
   color: black;
 }
 
-.action .call i {
+.action.call i {
   padding: 2px 8px;
   margin-right: 4px;
   background: rgba(34, 167, 240, 1);
   color: black;
 }
 
-.action .check i {
+.action.check i {
   padding: 4px 8px;
   background: rgba(34, 167, 240, 1);
   color: black;
 }
 
+.action span {
+  color: rgba(240, 255, 0, 1);
+}
+
+.action.call span {
+  color: white;
+}
+
+.action {
+  display: flex;
+}
+
 .action i {
+  display: block;
   border-radius: 50%;
 }
 
-.actions .action:last-child {
-  animation: anim-popup .3s ease;  
+.action div {
+  padding: 0 15px;
+  z-index: -1;
+  align-self: center;
+  overflow: hidden;
+  transform: translate(-20px);
+}
+
+.action span {
+  display: block;
+  transform: translate(-20px);
+  border-radius: 20px;
+  padding: 0 10px 0 25px;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.actions .action:last-child i {
+  animation: popup-action-logo .1s ease;  
+}
+
+.actions .action:last-child div span {
+  transform: translate(-120%);
+  transform-origin: left;
+  animation: popup-action-text .1s ease forwards;
+  animation-delay: .1s
+}
+
+.actions .action.collect div span {
+  animation: popup-action-text .1s ease forwards reverse;
 }
 
 
@@ -456,12 +479,21 @@ pg-table {
   }
 }
 
-@keyframes anim-popup {
+@keyframes popup-action-logo {
   0% {
-    transform: translateX(-50%) scale(0, 0);
+    transform: scale(0, 0);
   }
   100% {
-    transform: translateX(-50%) scale(1, 1);
+    transform: scale(1, 1);
+  }
+}
+
+@keyframes popup-action-text {
+  0% {
+    transform: translate(-100%);
+  }
+  100% {
+    transform: translate(-20px);
   }
 }
 

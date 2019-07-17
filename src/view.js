@@ -29,51 +29,65 @@ function renderSeats(ctrl) {
 }
 
 const actionStyle = (ctrl, index) => ({
-  transition: 'transform .3s, opacity .5s',
+  transition: 'transform .8s, opacity .8s',
   remove: {
     transform: util.translatePots(ctrl.data.seats, index),
-    opacity: '0.2'
+    opacity: '0.4'
   }
 });
 
 function renderAction(ctrl, type, index, klass, amount) {
+  function renderAmount(amount) {
+    return h('div', h('span', amount));
+  }
+
   var content;
   amount = amount?numberFormat(amount) + ctrl.data.currency: undefined;
   klass = '.' + numbers[index] + klass;
+  if (ctrl.anims.collectPots)
+    klass += '.' + 'collect';
+
   switch (type) {
   case 'bigBlind':
-    content = h('div.big-blind', [
+    klass += '.big-blind';
+    content = [
       h('i', 'B'),
-      h('span', amount)]);
+      renderAmount(amount)];
     break;
   case 'smallBlind':
-    content = h('div.small-blind', [
+    klass += '.small-blind';
+    content = [
       h('i', 'B'),
-      h('span', amount)]);
+      renderAmount(amount)];
     break;
   case 'raise':
-    content = h('div.raise', [
+    klass += '.raise';
+    content = [
       icons.raise,
-      h('span', amount)]);
+      renderAmount(amount)];
     break;
   case 'allin':
-    content = h('div.allin', [
+    klass += '.allin';
+    content = [
       icons.raise,
-      h('span', amount)]);    
+      renderAmount(amount)];
     break;
   case 'call':
-    content = h('div.call', [
+    klass += '.call';
+    content = [
       h('i', 'C'),
-      h('span', amount)]);
+      renderAmount(amount)];
     break;
   case 'fold':
-    content = h('div.fold', [
+    klass += '.fold';
+    content = [
       icons.fold,
-      amount ? h('span', amount): null
-    ]);
+      amount ? renderAmount(amount):null
+    ];
     break;
   case 'check':
-    content = h('div.check', icons.check);
+    klass += '.check';
+    content = [icons.check];
     break;
   }
   return h('div.action.' + klass, {
