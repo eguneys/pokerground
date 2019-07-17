@@ -104,13 +104,14 @@ function renderActions(ctrl) {
 
 
   if (lens.preflop(ctrl)) {
-    const bigBlindAction = lastActionsWithIndex.length >= ctrl.data.players;
-    const smallBlindAction = lastActionsWithIndex.length >= ctrl.data.players - 1;
+    const players = lens.players(ctrl);
+    const bigBlindAction = lastActionsWithIndex.length < players;
+    const smallBlindAction = lastActionsWithIndex.length < players - 1;
 
-    if (!bigBlindAction)
+    if (bigBlindAction)
       content.push(
         renderAction(ctrl, 'bigBlind', lens.bigBlind(ctrl), '', blinds));
-    if (!smallBlindAction)
+    if (smallBlindAction)
       content.push(
         renderAction(ctrl, 'smallBlind', lens.smallBlind(ctrl), '', blinds / 2));
   }

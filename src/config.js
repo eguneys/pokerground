@@ -5,12 +5,10 @@ export function configure(state, config) {
 
   if (config.pov) {
     state.seats = config.pov.seats.length;
-    state.players = config.pov.seats.filter(_=>_!==null).length;
   }
 
   if (config.fen) {
     state.play = fenReadPlay(config.fen);
-    console.log(state.play);
   }
 
 }

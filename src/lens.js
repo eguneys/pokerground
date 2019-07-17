@@ -24,6 +24,10 @@ export function seats(ctrl) {
   return ctrl.data.pov.seats;
 }
 
+export function players(ctrl) {
+  return handIndexes(ctrl).length;
+}
+
 export function setStack(ctrl, stack) {
   var handIndex = handIndexes(ctrl)
       .indexOf(toAct(ctrl));
@@ -109,7 +113,6 @@ export function toAct(ctrl) {
 
 export function takeLastActionsWithIndex(ctrl) {
   var recent = recentActionsWithIndex(ctrl).actions;
-  var players = ctrl.data.players;
 
   return recent.reduce((acc, action) => {
     acc = acc.filter(_ => _.i !== action.i);
