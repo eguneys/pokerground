@@ -72,8 +72,8 @@ export default function Controller(state) {
           unbindableTimeout(() => {
             this.anims.dealProgress[i] = 2;
             resolve();
-          }, 300, reject);
-        }, 300, reject);
+          }, 100, reject);
+        }, 100, reject);
       });
     }, Promise.resolve());
   };
