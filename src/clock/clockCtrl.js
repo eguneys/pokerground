@@ -27,6 +27,11 @@ export function ClockController(ctrl, opts) {
     }
   };
 
+  this.refresh = () => {
+    const toAct = lens.toAct(ctrl);
+
+    this.times.activeIndex = this.running ? toAct : undefined;
+  };
 
   this.setClock = ({ running, times, initial }) => {
     this.running = running;

@@ -4,6 +4,8 @@ import { numbers, numberFormat, chipsFormat, currencyFormat } from './util';
 
 import { renderClock } from './clock/clockView';
 
+import { bind } from './viewUtil';
+
 import * as util from './util';
 
 import * as lens from './lens';
@@ -13,7 +15,9 @@ function renderSeat(ctrl, seat, index) {
   const stack = lens.stack(ctrl, index);
 
   return (seat === null) ?
-    h('div.seat.empty.'+numbers[index], [
+    h('div.seat.empty.'+numbers[index], {
+      hook: bind('click', () => ctrl.clickSit(index))
+    }, [
       icons.sit
     ]) :
     h('div.seat.' + numbers[index], [

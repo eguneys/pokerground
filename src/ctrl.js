@@ -132,6 +132,13 @@ export default function Controller(state) {
     }, Promise.resolve());    
   };
 
+  this.sit = (pov) => {
+    this.data.pov.seats = pov.seats;
+    this.data.pov.handIndexes = pov.handIndexes;
+    this.data.pov.me = pov.me;
+    this.refreshClock();
+  };
+
   this.join = (idx, o, stack) => {
     this.data.pov.seats[idx] = o;
   };
@@ -252,6 +259,10 @@ export default function Controller(state) {
     return lp;
   };
 
+  this.refreshClock = () => {
+    this.clock.refresh();
+  };
+
   this.setClock = (o) => {
     this.clock.setClock(o);
   };
@@ -275,6 +286,10 @@ export default function Controller(state) {
   this.update = (delta) => {
     this.clock.update(delta);
     updateAnims(delta);
+  };
+
+  this.clickSit = (index) => {
+    callUserFunction(this.data.events.sit, index);
   };
 
   this.trans = trans(state.i18n);
