@@ -9,11 +9,11 @@ function callUserFunction(f, ...args) {
   if (f) setTimeout(() => f(...args), 1);
 }
 
-export default function Controller(state, redraw) {
+export default function Controller(state) {
   const d = this.data = state;
 
   this.anims = {
-    unbinds: []
+    updates: []
   };
 
   this.clock = new ClockController(this, {
@@ -26,18 +26,32 @@ export default function Controller(state, redraw) {
     lens.recentActions(this).push(act);
   };
 
+  const withDelay = (fn, delay, updateFn) => {
+    let lastUpdate = 0;
+
+    return (delta) => {
+      lastUpdate += delta;
+      if (lastUpdate >= delay) {
+        fn();
+        lastUpdate = 0;
+      } else {
+        if (updateFn)
+          updateFn(lastUpdate / delay);
+      }
+    };
+  };
+
   const unbindableTimeout = (f, delay, reject) => {
-    var unbinds = this.anims.unbinds;
-    var unbind;
-    var id = setTimeout(() => {
-      unbinds.slice(unbinds.indexOf(unbind), 1);
+    var updates = this.anims.updates;
+    var update = {};
+    update.update = withDelay(() => {
+      updates.splice(updates.indexOf(update), 1);
       f();
     }, delay);
-    unbind = () => {
-      clearTimeout(id);
+    update.unbind = () => {
       reject("Animation cancelled!");
     };
-    unbinds.push(unbind);
+    updates.push(update);
   };
 
   const beginDelay = (delay = 1000) => {
@@ -53,13 +67,10 @@ export default function Controller(state, redraw) {
     
     return this.data.involved.reduce((acc, i) => {
       return serialPromise((resolve, reject) => {
-        redraw();
         unbindableTimeout(() => {
           this.anims.dealProgress[i] = 1;
-          redraw();
           unbindableTimeout(() => {
             this.anims.dealProgress[i] = 2;
-            redraw();
             resolve();
           }, 300, reject);
         }, 300, reject);
@@ -76,8 +87,6 @@ export default function Controller(state, redraw) {
 
         this.data.pot = pot;
         lens.acts(this).unshift([]);
-
-        redraw();
         resolve();
       }, 500, reject);
     });
@@ -91,13 +100,10 @@ export default function Controller(state, redraw) {
     return new Promise((resolve, reject) => {
       unbindableTimeout(() => {
         this.anims.hideFlop = false;
-        redraw();
         unbindableTimeout(() => {
           this.anims.hideTurn = false;
-          redraw();
           unbindableTimeout(() => {
             this.anims.hideRiver = false;
-            redraw();
             unbindableTimeout(() => {
               resolve();
             }, 1000, reject);
@@ -117,10 +123,8 @@ export default function Controller(state, redraw) {
         unbindableTimeout(() => {
           this.anims.shareProgress = pot;
           this.data.pot -= pot.amount;
-          redraw();
           unbindableTimeout(() => {
             this.anims.shareProgress = undefined;
-            redraw();
             resolve();
           }, 1000, reject);
         }, 500, reject);
@@ -152,7 +156,7 @@ export default function Controller(state, redraw) {
 
     this.data.involved = lens.handIndexes(this);
 
-    this.clearAnims();
+    clearAnims();
 
     return beginDeal();
   };
@@ -164,7 +168,6 @@ export default function Controller(state, redraw) {
       .then(() => beginDelay(1500))
       .then(() => {
         this.data.middle = readMiddle(middle) || {};
-        redraw();
       }).then(beginDelay);
   };
 
@@ -191,8 +194,8 @@ export default function Controller(state, redraw) {
   };
 
   this.check = () => {
-    
     addAct({ 'act': 'check' });
+    return Promise.resolve();
   };
 
   this.fold = () => {
@@ -200,21 +203,25 @@ export default function Controller(state, redraw) {
     this.data.involved = this.data.involved.filter(_ => _!=turn);
 
     addAct({ 'act': 'fold' });
+    return Promise.resolve();
   };
 
   this.call = (call, stack) => {
     lens.setStack(this, stack);
     addAct({ 'act': 'call', amount: call });
+    return Promise.resolve();
   };
 
   this.raise = (raise, stack) => {
     lens.setStack(this, stack);
     addAct({ 'act': 'raise', amount: raise });
+    return Promise.resolve();
   };
 
   this.allin = (allin) => {
     lens.setStack(this, 0);
     addAct({ 'act': 'allin', amount: allin });
+    return Promise.resolve();
   };
 
   this.move = (move, stack) => {
@@ -250,12 +257,21 @@ export default function Controller(state, redraw) {
     this.clock.setClock({});
   };
 
-  this.clearAnims = () => {
-    this.anims.unbinds.forEach(_ => _());
+  const clearAnims = () => {
+    this.anims.updates.forEach(_ => _.unbind());
 
     this.anims = {
-      unbinds: []
+      updates: []
     };
+  };
+
+  const updateAnims = (delta) => {
+    this.anims.updates.forEach(_ => _.update(delta));
+  };
+
+  this.update = (delta) => {
+    this.clock.update(delta);
+    updateAnims(delta);
   };
 
   this.trans = trans(state.i18n);

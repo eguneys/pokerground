@@ -6,6 +6,8 @@ import style from 'snabbdom/modules/style';
 
 export const patch = init([klass, attributes, eventlisteners, style]);
 
+import Loop from './loop';
+
 import start from './api';
 
 import { configure } from './config';
@@ -32,6 +34,11 @@ export function app(element, config) {
 
   const blueprint = view(ctrl);
   vnode = patch(element, blueprint);
+
+  new Loop((delta) => {
+    ctrl.update(delta);
+    redraw();
+  }).start();
 
   if (module.hot) {
     module.hot.accept('./ctrl', function() {

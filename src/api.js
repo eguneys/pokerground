@@ -54,11 +54,16 @@ export default function start(ctrl, redraw) {
 
 }
 
+export function anim(mutate, state) {
+  const resultP = mutate(state);
+  return resultP;
+}
+
 const perf = window.performance !== undefined ? window.performance : Date;
 
 const raf = window.requestAnimationFrame;
 
-export function anim(mutate, state) {
+export function animOLD(mutate, state) {
   const resultP = mutate(state);
 
   return Promise

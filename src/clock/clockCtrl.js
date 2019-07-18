@@ -13,20 +13,12 @@ export function ClockController(ctrl, opts) {
 
   this.elements = {};
 
-  const scheduleTick = (time) => {
-    if (this.tickCallback !== undefined) clearTimeout(this.tickCallback);
-    this.tickCallback = setTimeout(tick, 100);
-  };
-
-  const tick = () => {
-    this.tickCallback = undefined;
+  const tick = (delta) => {
     const index = this.times.activeIndex;
     if (index === undefined) return;
 
-    const now = nowFun();
-    const millis = Math.max(0, this.times.times - this.elapsed(now));
-    
-    scheduleTick(millis);
+    this.times.millis = Math.max(0, this.times.millis - delta);
+    const millis = this.times.millis;
 
     if (millis === 0) {
       this.opts.onFlag();
@@ -37,7 +29,8 @@ export function ClockController(ctrl, opts) {
 
 
   this.setClock = ({ running, times, initial }) => {
-    const isClockRunning = running;
+    this.running = running;
+
     const toAct = lens.toAct(ctrl);
 
     this.barTime = 1000 * initial;
@@ -46,23 +39,23 @@ export function ClockController(ctrl, opts) {
     this.times = {
       initial: initial,
       times: times * 1000,
-      activeIndex: isClockRunning ? toAct : undefined,
-      lastUpdate: nowFun()
+      millis: times * 1000,
+      activeIndex: running ? toAct : undefined
     };
-
-    if (isClockRunning) scheduleTick(this.times.times);
   };
 
   this.setClock(cdata);
 
   this.timeRatio = (millis) =>
   Math.min(1, millis * this.timeRatioDivisor);
-
-  this.elapsed = (now = nowFun()) => Math.max(0, now - this.times.lastUpdate);
   
-  this.millisOf = (index) => 
-  (this.times.activeIndex === index ?
-   Math.max(0, this.times.times - this.elapsed()) :
-   this.times.initial);
+  const maybeTick = (delta) => {
+    if (this.running) {
+      tick(delta);
+    }
+  };
 
+  this.update = (delta) => {
+    maybeTick(delta);
+  };
 }

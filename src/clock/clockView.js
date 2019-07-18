@@ -5,9 +5,8 @@ export function renderClock(ctrl, seat, index) {
 
   if (index !== clock.times.activeIndex) return null;
 
-  const update = (el) => {
+  const setEl = (el) => {
     clock.elements[index] = el;
-    el.style['stroke-dashoffset'] = clock.timeRatio(clock.millisOf(index)) * 283 + '%';
   };
 
   return h('div.timer', [
@@ -20,8 +19,8 @@ export function renderClock(ctrl, seat, index) {
           'stroke-dasharray': '113px',
         },
         hook: {
-          insert: vnode => update(vnode.elm),
-          postpatch: (_, vnode) => update(vnode.elm)
+          insert: vnode => setEl(vnode.elm),
+          postpatch: (_, vnode) => setEl(vnode.elm)
         },
         attrs: { cx: 20, cy: 20, r: 18, fill: 'none' }
       })
