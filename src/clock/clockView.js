@@ -30,4 +30,7 @@ export function renderClock(ctrl, seat, index) {
 
 export function updateElements(clock, els, millis) {
   els.style['stroke-dashoffset'] = clock.timeRatio(millis) * 283 + '%';
+  const cl = els.classList;
+  if (millis < clock.emergMs) cl.add('emerg');
+  else if (cl.contains('emerg')) cl.remove('emerg');
 }

@@ -1,6 +1,8 @@
 import { app } from '../main';
 import { is, not, ok, log } from 'testiz/browser';
 
+const noop = () => {};
+
 const delay = (d = 0) => new Promise(resolve => setTimeout(resolve, d));
 
 function klass(cls, elm) {
@@ -53,7 +55,7 @@ export default function run() {
 
   withApp(async (api, dom, loop) => {
     log('interrupt deal cards');
-    api.deal('70b 50B!0(. .)~10!0\n', [3, 4]);
+    api.deal('70b 50B!0(. .)~10!0\n', [3, 4]).catch(noop);
     await delay();
     loop.advance(200);
     await delay();
@@ -61,7 +63,7 @@ export default function run() {
     await delay();
     loop.advance(10);
     hasChild('zero cards', klass('hand four', dom), 0);
-    log(klass('hand four', dom));
+    // log(klass('hand four', dom));
   }, config);
 
 }

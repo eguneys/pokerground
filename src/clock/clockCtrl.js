@@ -36,6 +36,8 @@ export function ClockController(ctrl, opts) {
     this.barTime = 1000 * initial;
     this.timeRatioDivisor = 1 / this.barTime;
 
+    this.emergMs = 1000 * Math.min(60, Math.max(10, cdata.initial * .125));
+
     this.times = {
       initial: initial,
       times: times * 1000,

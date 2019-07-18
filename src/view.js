@@ -129,9 +129,9 @@ function renderActions(ctrl) {
 
 function renderPots(ctrl) {
   const potShareStyle = (ctrl, index) => ({
-    transition: 'transform .3s, opacity .6s',
+    transition: 'transform 1s, opacity 1s',
     delayed: {
-      opacity: 0,
+      opacity: 0.2,
       transform: util.translatePots(ctrl.data.seats, index, true)
     }
   });
