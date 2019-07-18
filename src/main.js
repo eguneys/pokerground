@@ -28,7 +28,7 @@ export function app(element, config) {
     vnode = patch(vnode, view(ctrl));
   }
 
-  state.redraw = redraw;
+  // state.redraw = redraw;
 
   ctrl = new makeCtrl(state, redraw);
 

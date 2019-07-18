@@ -163,6 +163,7 @@ export default function Controller(state) {
 
   this.nextRound = ({ middle, pot }) => {
     this.clearClock();
+    clearAnims();
 
     return beginCollectPots(pot)
       .then(() => beginDelay(1500))
@@ -175,6 +176,7 @@ export default function Controller(state) {
     this.data.showdown = { pots, hands: readHands(hands) };
 
     this.clearClock();
+    clearAnims();
 
     return beginCollectPots(pot)
       .then(() => beginDelay(1500))
@@ -188,6 +190,7 @@ export default function Controller(state) {
     this.data.showdown = { pots, hands: {} };
 
     this.clearClock();
+    clearAnims();
 
     return beginCollectPots(pot)
       .then(beginSharePots);

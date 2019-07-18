@@ -98,12 +98,6 @@ pg-table {
   width: 100%;
 }
 
-.cards .hole .card {
-  position: absolute;
-  transform: rotateY(90deg);
-  animation: flip-card .5s .5s ease forwards, pop-card .2s .8s ease;
-}
-
 .cards .hole .card.back {
   animation: flip-card .5s ease reverse;
 }
@@ -131,12 +125,13 @@ pg-table {
   position: relative;
 }
 
-.cards .middle .card {
+.cards .middle .card,
+.cards .hole .card {
   position: absolute;
   top: 0;
   left: 0;
   transform: rotateY(90deg);
-  animation: flip-card .5s .5s ease forwards, pop-card .2s .8s ease;
+  animation: flip-card .5s .5s ease forwards, bubble .2s .8s;
 }
 
 .cards .middle .card.back {
@@ -380,6 +375,10 @@ pg-table {
   
 }
 
+.seats .seat .timer {
+  animation: bubble .5s;
+}
+
 .five .seats .seat.one,
 .five .cards .hole.one {
   bottom: 8%;
@@ -515,7 +514,7 @@ pg-table {
   }
 }
 
-@keyframes pop-card {
+@keyframes bubble {
   0% {
     transform: scale(1, 1);
   }
