@@ -89,6 +89,11 @@
                   Promise.resolve([]))
 
    const api = init();
+   tests();
+
+   function tests() {
+     Pokerground.Tests();
+   }
 
    function init() {
      
@@ -99,7 +104,7 @@
 
      var config = {
        currency: '$',
-       fen: '70b 50B 100 100, 100!20(30 50 . . .)~10!0\nR20 R20',
+       fen: '70b 50B 100 100 100!20(30 50 . . .)~10!0\nR20 R20',
        clock: {
          running: true,
          initial: 60,

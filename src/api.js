@@ -4,7 +4,7 @@ import { configure } from './config';
 
 import { readMove as fenReadMove } from './fen';
 
-export default function start(ctrl, redraw) {
+export default function start(ctrl) {
 
   return {
     set(config) {
