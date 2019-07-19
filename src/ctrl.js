@@ -78,25 +78,28 @@ export default function Controller(state) {
     }, Promise.resolve());
   };
 
-  const beginCollectPots = (pot) => {
+  const beginCollectPots = (oldPot) => {
+    this.anims.pot = oldPot;
     this.anims.collectPots = true;
 
     return new Promise((resolve, reject) => {
       unbindableTimeout(() => {
+        this.anims.pot = undefined;
         this.anims.collectPots = false;
-
-        this.data.pot = pot;
-        lens.acts(this).unshift([]);
         resolve();
       }, 500, reject);
     });
   };
 
-  const beginRevealCards = () => {
+  const beginHideCards = () => {
     this.anims.hideFlop = !lens.seenRound(this, 'flop');
     this.anims.hideTurn = !lens.seenRound(this, 'turn');
     this.anims.hideRiver = !lens.seenRound(this, 'river');
     
+    return Promise.resolve();
+  };
+
+  const beginRevealCards = () => {
     return new Promise((resolve, reject) => {
       unbindableTimeout(() => {
         this.anims.hideFlop = false;
@@ -114,6 +117,7 @@ export default function Controller(state) {
   };
 
   const beginSharePots = () => {
+    this.anims.pot = this.data.pot;
     var pots = this.data.showdown.pots;
 
     var serialPromise = makeSerialPromise();
@@ -122,14 +126,14 @@ export default function Controller(state) {
       return serialPromise((resolve, reject) => {
         unbindableTimeout(() => {
           this.anims.shareProgress = pot;
-          this.data.pot -= pot.amount;
+          this.anims.pot -= pot.amount;
           unbindableTimeout(() => {
             this.anims.shareProgress = undefined;
             resolve();
           }, 1000, reject);
         }, 500, reject);
       });
-    }, Promise.resolve());    
+    }, Promise.resolve());
   };
 
   this.sit = (pov) => {
@@ -147,11 +151,12 @@ export default function Controller(state) {
   };
 
   this.deal = (fen, handIndexes, me) => {
-    this.data.pot = 0;
     this.data.middle = {};
     this.data.showdown = undefined;
 
     this.data.play = readPlay(fen);
+
+    this.data.pot = 0;
 
     this.data.pov.me = me;
     this.data.pov.handIndexes = handIndexes;
@@ -169,37 +174,46 @@ export default function Controller(state) {
   };
 
   this.nextRound = ({ middle, pot }) => {
+    this.data.middle = readMiddle(middle) || {};
+    lens.acts(this).unshift([]);
+
+    const oldPot = this.data.pot;
+    this.data.pot = pot;
+
     this.clearClock();
     clearAnims();
 
-    return beginCollectPots(pot)
-      .then(() => beginDelay(1500))
-      .then(() => {
-        this.data.middle = readMiddle(middle) || {};
-      }).then(beginDelay);
+    return beginCollectPots(oldPot)
+      .then(beginDelay);
   };
 
-  this.showdown = ({ hands, pots, middle, pot }) => {
+  this.showdown = ({ hands, pots, middle }) => {
     this.data.showdown = { pots, hands: readHands(hands) };
+    this.data.middle = readMiddle(middle);
+
+    const oldPot = this.data.pot;
+    this.data.pot = pots.reduce((acc, _) => _.amount + acc, 0);
 
     this.clearClock();
     clearAnims();
 
-    return beginCollectPots(pot)
-      .then(() => beginDelay(1500))
-      .then(() => {
-        this.data.middle = readMiddle(middle);
-      }).then(beginRevealCards)
+    return beginHideCards()
+      .then(beginCollectPots(oldPot))
+      .then(beginDelay)
+      .then(beginRevealCards)
       .then(beginSharePots);
   };
 
-  this.endRound = ({ pots, pot }) => {
-    this.data.showdown = { pots, hands: {} };
+  this.endRound = ({ pots }) => {
+    this.data.showdown = { pots, hands: [] };
+
+    const oldPot = this.data.pot;
+    this.data.pot = pots.reduce((acc, _) => _.amount + acc, 0);
 
     this.clearClock();
     clearAnims();
 
-    return beginCollectPots(pot)
+    return beginCollectPots(oldPot)
       .then(beginSharePots);
   };
 

@@ -16,6 +16,10 @@ export function showdownHands(ctrl) {
   return ctrl.data.showdown.hands;
 }
 
+export function showdownHand(ctrl, index) {
+  return showdownHands(ctrl)[handIndexes(ctrl).indexOf(index)];
+}
+
 export function involved(ctrl) {
   return ctrl.data.involved;
 }

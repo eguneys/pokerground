@@ -135,13 +135,13 @@ function renderPots(ctrl) {
   const potShareStyle = (ctrl, index) => ({
     transition: 'transform 1s, opacity 1s',
     delayed: {
-      opacity: 0.2,
+      opacity: 0.8,
       transform: util.translatePots(ctrl.data.seats, index, true)
     }
   });
 
-  var amount = ctrl.data.pot;
-  
+  var amount = (ctrl.anims.pot !== undefined) ? ctrl.anims.pot : ctrl.data.pot;
+
   var sidePot = ctrl.anims.shareProgress;
 
   var mainContent = amount > 0 ? h('div.pot', [
@@ -252,7 +252,7 @@ function renderMiddle(ctrl) {
       pot = ctrl.anims.shareProgress;
 
   if (pot) {
-    hand = lens.showdownHands(ctrl)[pot.involved[0]];
+    hand = lens.showdownHand(ctrl, pot.involved[0]);
     highlightHand = hand && hand.hand;
   }
 
@@ -274,7 +274,7 @@ function renderHoles(ctrl) {
       pot = ctrl.anims.shareProgress;
 
   if (pot) {
-    hand = lens.showdownHands(ctrl)[pot.involved[0]];
+    hand = lens.showdownHand(ctrl, pot.involved[0]);
     highlightHand = hand && hand.hand;
   }
 
@@ -296,8 +296,7 @@ function renderShareHandValue(ctrl) {
   var pot = ctrl.anims.shareProgress;
   var content;
   if (pot) {
-    var index = pot.involved[0];
-    var hand = lens.showdownHands(ctrl)[index];
+    var hand = lens.showdownHand(ctrl, pot.involved[0]);
 
     if (hand) {
       content = [h('div', hand.rank)];

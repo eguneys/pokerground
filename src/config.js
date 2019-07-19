@@ -13,7 +13,7 @@ export function configure(state, config) {
 
 }
 
-function merge(base, extend) {
+export function merge(base, extend) {
   for (var key in extend) {
     if (isObject(base[key]) && isObject(extend[key])) {
       merge(base[key], extend[key]);

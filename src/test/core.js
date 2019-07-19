@@ -1,39 +1,24 @@
-import { app } from '../main';
 import { is, not, ok, log } from 'testiz/browser';
 
-const noop = () => {};
+import { withApp, withDefaults, noop, delay, hasChild, hasText, select, klass } from './util';
 
-const delay = (d = 0) => new Promise(resolve => setTimeout(resolve, d));
-
-function klass(cls, elm) {
-  return elm.getElementsByClassName(cls)[0];
+async function deal(fen, indexes, api, loop) {
+  api.deal(fen, indexes);
+  await delay();
+  loop.advance(200);
+  await delay();
 }
 
-function hasChild(msg, dom, n) {
-  is(msg, dom.children.length, n);
+async function nextRound(o, api, loop) {
+  api.nextRound(o);
+  loop.advance(500);
+  await delay();
+  loop.advance(1000);
 }
 
 export default function run() {
-
-  const config = {
-    currency: '$',
-    fen: '70b 50!0(. .)~10!0\n',
-    clock: {
-      running: true,
-      initial: 60,
-      times: 60,
-    },
-    pov: {
-      seats: [ null,
-               null,
-               null,
-               { img: 'https://i.pravatar.cc/300' },
-               { img: 'https://i.pravatar.cc/300' }],
-      handIndexes: [3, 4]
-    },
-    events: {
-    }
-  };
+  
+  const config = withDefaults({ fen: '70b 50!0(. .)~10!0\n' });
 
   withApp(async (api, dom, loop) => {
     log('deal cards one by one');
@@ -66,27 +51,20 @@ export default function run() {
     // log(klass('hand four', dom));
   }, config);
 
-}
+  withApp(async (api, dom, loop) => {
+    log('pots before dealt');
+    hasChild('zero pots', klass('pots', dom), 0);
+    log('pots after deal');
+    await deal('70b 50B!0(. .)~10!0\n', [3, 4], api, loop);
+    hasChild('zero pots', klass('pots', dom), 0);
+    log('pots after preflop');
+    loop.advance(500);
+    await nextRound({ middle: '', pot: 15 }, api, loop);
+    hasChild('one pot', klass('pots', dom), 1);
+    hasText('15$ pot', select('.pots .pot span', dom), '15$');
+    await nextRound({ middle: '', pot: 30 }, api, loop);
+    hasText('30$ pot', select('.pots .pot span', dom), '30$');
+  }, config);
 
-function withApp(fn, config) {
-  function TestLoop(fn) {
-    this.advance = (time) => {
-      const dt = 25;
-      while (time > 0) {
-        time -= dt;
-        fn(dt);
-      }      
-    };
-  }
-
-  let loop;
-
-  const parent = document.createElement('div');
-  const dom = document.createElement('div');
-  parent.appendChild(dom);
-
-  const api = app(dom, config, (fn) => { loop = new TestLoop(fn); });
-
-  fn(api, parent, loop);
-  
+  const config2 = withDefaults({ fen: '70b 50B!0(10 10)~10!0\nR10 R20' });
 }

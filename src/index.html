@@ -191,17 +191,16 @@
      }
    })();
 
-   const apiShowdownMuck = (() => {
+   const apiShowdownMuck = () => {
      var showdown = {
        pots: [
-         { amount: 1500, involved: [handIndexes[1]]}
-       ],
-       pot: 1000
+         { amount: 150000, involved: [handIndexes[0], handIndexes[1]]},
+         { amount: 1500, involved: [handIndexes[1]]},
+       ]
      };
-     return function() {
-       return api.endRound(showdown);
-     };
-   })();
+
+     return api.endRound(showdown);
+   };
 
    const apiShowdown = (() => {
      const handMap = {
@@ -228,8 +227,7 @@
             * { amount: 1500, involved: [seatIndexes[1]]},
             * { amount: 1500, involved: [seatIndexes[2]]},
             * { amount: 1500, involved: [seatIndexes[0]]}, */
-           { amount: 16000, involved: [handIndexes[0], handIndexes[1]]}],
-         pot: 16000
+           { amount: 16000, involved: [handIndexes[0], handIndexes[1]]}]
        };
 
        return api.showdown(showdown);
@@ -317,8 +315,8 @@
 
    onClick(document.getElementById("fold"), () => apiMove({
      uci: 'F',
-     clock
-     // end: true
+     clock,
+     end: true
    }));
 
    function onClick(button, f) {
