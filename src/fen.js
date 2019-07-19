@@ -29,12 +29,11 @@ export function readMiddle(middle) {
 }
 
 export function readHands(hands) {
-  var res = {};
-  Object.keys(hands).map(key => {
-    var hand = hands[key];
-    res[key] = { hole: readCards(hand.hole), rank: hand.rank, hand: readCards(hand.hand) };
-  });
-  return res;
+  return hands.map(hand => ({ 
+    hole: readCards(hand.hole),
+    rank: hand.rank,
+    hand: readCards(hand.hand) 
+  }));
 }
 
 const acts = { 'R': 'raise', 'C': 'call', 'H': 'check', 'F': 'fold', 'A': 'allin' };

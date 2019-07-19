@@ -135,7 +135,6 @@ export default function Controller(state) {
   this.sit = (pov) => {
     this.data.pov.seats = pov.seats;
     this.data.pov.handIndexes = pov.handIndexes;
-    this.data.pov.me = pov.me;
     this.refreshClock();
   };
 
@@ -147,13 +146,14 @@ export default function Controller(state) {
     this.data.pov.seats[idx] = null;
   };
 
-  this.deal = (fen, handIndexes) => {
+  this.deal = (fen, handIndexes, me) => {
     this.data.pot = 0;
     this.data.middle = {};
     this.data.showdown = undefined;
 
     this.data.play = readPlay(fen);
 
+    this.data.pov.me = me;
     this.data.pov.handIndexes = handIndexes;
 
     // some kind of bug on snabbdom doesnt remove dealt cards

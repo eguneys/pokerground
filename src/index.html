@@ -89,6 +89,7 @@
                   Promise.resolve([]))
 
    let handIndexes = [0, 1, 2, 3, 4];
+   let me;
 
    const api = init();
    tests();
@@ -130,6 +131,7 @@
 
    const apiSit = (index) => {
      handIndexes = [3, 4];
+     me = 'As Ad';
 
      const pov = {
        seats: [{ img: 'https://i.pravatar.cc/300?1' },
@@ -137,10 +139,10 @@
                null,
                { img: 'https://i.pravatar.cc/300?2' },
                { img: 'https://i.pravatar.cc/300?3' }],
-       handIndexes: handIndexes.slice(0),
-       me: true
+       handIndexes
      };
      api.sit(pov);
+     handIndexes.push(0);
    };
 
    const apiJoin = () => {
@@ -170,28 +172,20 @@
    };
 
    const apiDeal = (() => {
-     var fens = [
-       { fen: '60b 40s 100B 100, 100!20(. 5 10 . .)~10!0\n',
-         handIndexes: [0, 1, 2, 3, 4] },
-       { fen: '70 50b 100s 100B, 100!20(. . 5 10 .)~10!0\n',
-         handIndexes: [1,2,3,4,0] },
-       { fen: '70 50 100b 100B!20(. . 5 10)~10!0\n',
-         handIndexes: [0,1,2,3] },
-       { fen: '70B, 100b!20(10 5)~10!0\n',
-         handIndexes: [0, 1] },
-       { fen : '70s 100b!20(5 10 . . .)~10!0\n',
-         handIndexes: [1, 0] }
-     ];
-     function nextFen(fen) {
-       return fens[(fens.indexOf(fen) + 1) % fens.length];
-     }
-     var fen = fens[0];
-     
+     var fens = {
+       5: ['60b 40s 100B 100, 100!20(. 5 10 . .)~10!0\n',
+           '70 50b 100s 100B, 100!20(. . 5 10 .)~10!0\n'],
+       4: ['70 50 100b 100B!20(. . 5 10)~10!0\n'],
+       3: ['70 50 100b!20(. . .)~10!0\n'],
+       2: ['70B, 100b!20(10 5)~10!0\n',
+           '70s 100b!20(5 10 . . .)~10!0\n'],
+     };
+
      return function() {
-       fen = nextFen(fen);
-       handIndexes = fen.handIndexes;
+       fen = fens[handIndexes.length];
+       fen = fen[Math.floor(Math.random() * fen.length)];
        return Promise.all([
-         api.deal(fen.fen, handIndexes.slice(0)),
+         api.deal(fen, handIndexes.slice(0), me),
          api.setClock(clock)
        ]);
      }
@@ -210,27 +204,34 @@
    })();
 
    const apiShowdown = (() => {
-     var showdown = {
-       middle: {
-         flop: 'As Tc Qd',
-         turn: 'Kh',
-         river: '2c'
-       },
-       hands: {
-         [handIndexes[0]]: { hole: 'Ah Ac', rank: 'threepair', hand: 'Ah Ac As Qd Tc' },
-         [handIndexes[1]]: { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' },
-         [handIndexes[2]]: { hole: '2c 3c', rank: 'highcard', hand: 'As Qd Tc 3c 2c' }
-       },
-       pots: [
-         /* { amount: 1500, involved: [seatIndexes[1]]},
-          * { amount: 5000, involved: [seatIndexes[0], seatIndexes[2], seatIndexes[1]]},
-          * { amount: 1500, involved: [seatIndexes[1]]},
-          * { amount: 1500, involved: [seatIndexes[2]]},
-          * { amount: 1500, involved: [seatIndexes[0]]}, */
-         { amount: 16000, involved: [handIndexes[0], handIndexes[2]]}],
-       pot: 16000
+     const handMap = {
+       0: { hole: 'Ah Ac', rank: 'threepair', hand: 'Ah Ac As Qd Tc' },
+       1: { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' },
+       2: { hole: '2c 3c', rank: 'highcard', hand: 'As Qd Tc 3c 2c' },
+       3: { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' },
+       4: { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' }
      };
+
      return function() {
+       const hands = handIndexes.map(i => handMap[i]);
+
+       var showdown = {
+         middle: {
+           flop: 'As Tc Qd',
+           turn: 'Kh',
+           river: '2c'
+         },
+         hands,
+         pots: [
+           /* { amount: 1500, involved: [seatIndexes[1]]},
+            * { amount: 5000, involved: [seatIndexes[0], seatIndexes[2], seatIndexes[1]]},
+            * { amount: 1500, involved: [seatIndexes[1]]},
+            * { amount: 1500, involved: [seatIndexes[2]]},
+            * { amount: 1500, involved: [seatIndexes[0]]}, */
+           { amount: 16000, involved: [handIndexes[0], handIndexes[1]]}],
+         pot: 16000
+       };
+
        return api.showdown(showdown);
      };
    })();

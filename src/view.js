@@ -280,9 +280,8 @@ function renderHoles(ctrl) {
 
   if (sd) {
     content = [
-      ...content, ...Object.keys(sd.hands).map(idx => {
-        var { hole } = sd.hands[idx];
-        var seatIndex = lens.handIndexes(ctrl)[idx];
+      ...content, ...sd.hands.map(({ hole }, i) => {
+        var seatIndex = lens.handIndexes(ctrl)[i];
         return h('div.hole.' + numbers[seatIndex],
                  hole.map(hole =>
                    h('div', renderMiddleCard(hole, highlightHand))));
