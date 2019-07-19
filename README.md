@@ -30,7 +30,16 @@
          turn: 'Kh',
          river: '2c'
        },
-       hands,
+       // player hands
+       // according seat index for an hands index is mapped to handIndexes
+       // null for mucked hands
+       hands: [
+         { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' },
+         null,
+         null,
+         null,
+         null
+       ],
        pots: [
          { amount: 16000,
            // index to seats involved in pot

@@ -29,11 +29,11 @@ export function readMiddle(middle) {
 }
 
 export function readHands(hands) {
-  return hands.map(hand => ({ 
+  return hands.map(hand => hand ? ({ 
     hole: readCards(hand.hole),
     rank: hand.rank,
     hand: readCards(hand.hand) 
-  }));
+  }): null);
 }
 
 const acts = { 'R': 'raise', 'C': 'call', 'H': 'check', 'F': 'fold', 'A': 'allin' };

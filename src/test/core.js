@@ -1,50 +1,8 @@
 import { is, not, ok, log } from 'testiz/browser';
 
-import { withApp, withDefaults, noop, advance, hasChild, noChild, oneChild, hasText, select, klass } from './util';
+import { noop, hasChild, noChild, oneChild, hasText, select, klass } from './testutil';
 
-async function deal(fen, indexes, api, loop) {
-  api.deal(fen, indexes);
-  await advance(200, loop);
-
-  await advance(200, loop);
-}
-
-async function nextRound(o, api, loop) {
-  api.nextRound(o);
-  await advance(500, loop);
-
-  await advance(1000, loop);
-}
-
-async function endRound(o, api, loop) {
-  const pots = o.pots;
-  
-  api.endRound(o);
-  // begin collect pots
-  await advance(500, loop);
-  // begin share pots
-  for (var i = 0; i < pots.length; i++) {
-    await advance(1500, loop);
-  }
-}
-
-async function showdown(o, api, loop) {
-  const pots = o.pots;
-
-  api.showdown(o);
-  // begin hide cards
-  // begin collect pots
-  await advance(500, loop);
-  // begin delay
-  await advance(1000, loop);
-  // begin reveal cards
-  await advance(6000, loop);
-
-  // begin share pots
-  for (var i = 0; i < pots.length; i++) {
-    await advance(1500, loop);
-  }
-}
+import { withApp, withDefaults, advance, deal, endRound, nextRound, showdown } from './util';
 
 export default function run() {
 
@@ -102,7 +60,4 @@ export default function run() {
     await showdown(showdownConfig, api, loop);
     noChild('pot', klass('pots', dom));
   }, config);
-
-  const config2 = withDefaults({ fen: '70b 50B!0(10 10)~10!0\nR10 R20' });
-  
 }

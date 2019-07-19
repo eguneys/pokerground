@@ -280,7 +280,9 @@ function renderHoles(ctrl) {
 
   if (sd) {
     content = [
-      ...content, ...sd.hands.map(({ hole }, i) => {
+      ...content, ...sd.hands.map((hand, i) => {
+        if (!hand) return null;
+        const { hole } = hand;
         var seatIndex = lens.handIndexes(ctrl)[i];
         return h('div.hole.' + numbers[seatIndex],
                  hole.map(hole =>

@@ -1,65 +1,56 @@
 import { app } from '../main';
 import { merge } from '../config';
 
-import { is, not, ok } from 'testiz/browser';
+import { delay, makeAwaitable } from './testutil';
 
-export const noop = () => {};
+export async function deal(fen, indexes, api, loop) {
+  api.deal(fen, indexes);
 
-export const delay = (d = 0) => new Promise(resolve => setTimeout(resolve, d));
+  for (var i = 0; i < indexes.length; i++) {
+    await advance(200, loop);
+  }
+}
+
+export async function nextRound(o, api, loop) {
+  api.nextRound(o);
+  await advance(500, loop);
+
+  await advance(1000, loop);
+}
+
+export async function endRound(o, api, loop) {
+  const pots = o.pots;
+  
+  api.endRound(o);
+  // begin collect pots
+  await advance(500, loop);
+  // begin share pots
+  for (var i = 0; i < pots.length; i++) {
+    await advance(1500, loop);
+  }
+}
+
+export async function showdown(o, api, loop) {
+  const pots = o.pots;
+
+  api.showdown(o);
+  // begin hide cards
+  // begin collect pots
+  await advance(500, loop);
+  // begin delay
+  await advance(1000, loop);
+  // begin reveal cards
+  await advance(6000, loop);
+
+  // begin share pots
+  for (var i = 0; i < pots.length; i++) {
+    await advance(1500, loop);
+  }
+}
 
 export async function advance(dt, loop) {
   await delay();
   loop.advance(dt);
-}
-
-export function select(selector, elm) {
-  function selectSingle(selector, elm) {
-    const klassPattern = /\.(.*)/;
-    let matched;
-    if ((matched = selector.match(klassPattern))) {
-      return elm.getElementsByClassName(matched[1])[0];
-    } else {
-      return elm.getElementsByTagName(selector)[0];
-    }
-  }
-
-  selector = selector.split(' ');
-
-  return selector.reduce((acc, selector) => {
-    if (!acc) return acc;
-    return selectSingle(selector, acc);
-  }, elm);
-}
-
-export function klass(cls, elm) {
-  return elm.getElementsByClassName(cls)[0];
-}
-
-export function hasText(msg, dom, text) {
-  is(msg, dom.textContent, text);
-}
-
-export function oneChild(msg, dom, n) {
-  hasChild('one ' + msg, dom, 1);
-}
-
-export function noChild(msg, dom, n) {
-  hasChild('no ' + msg, dom, 0);
-}
-
-export function hasChild(msg, dom, n) {
-  is(msg, dom.children.length, n);
-}
-
-function makeAwaitable(fn) {
-  let lastPromise = Promise.resolve();
-  
-  return function(...args) {
-    lastPromise = lastPromise.then(async () => {
-      await fn(...args);
-    });
-    return lastPromise;
-  };
 }
 
 export const withApp = makeAwaitable(async (fn, config) => {

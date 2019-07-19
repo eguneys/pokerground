@@ -139,7 +139,7 @@
                null,
                { img: 'https://i.pravatar.cc/300?2' },
                { img: 'https://i.pravatar.cc/300?3' }],
-       handIndexes
+       handIndexes: handIndexes.slice(0)
      };
      api.sit(pov);
      handIndexes.push(0);
@@ -203,16 +203,18 @@
    };
 
    const apiShowdown = (() => {
-     const handMap = {
-       0: { hole: 'Ah Ac', rank: 'threepair', hand: 'Ah Ac As Qd Tc' },
-       1: { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' },
-       2: { hole: '2c 3c', rank: 'highcard', hand: 'As Qd Tc 3c 2c' },
-       3: { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' },
-       4: { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' }
-     };
+     const handMap = [
+       { hole: 'Ah Ac', rank: 'threepair', hand: 'Ah Ac As Qd Tc' },
+       { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' },
+       { hole: '2c 3c', rank: 'highcard', hand: 'As Qd Tc 3c 2c' },
+       { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' },
+       { hole: 'Kc Jh', rank: 'straight', hand: 'As Kh Qd Jh Tc' }
+     ];
 
      return function() {
        const hands = handIndexes.map(i => handMap[i]);
+
+       hands[handIndexes.length - 2] = null;
 
        var showdown = {
          middle: {
