@@ -7,6 +7,11 @@ export const noop = () => {};
 
 export const delay = (d = 0) => new Promise(resolve => setTimeout(resolve, d));
 
+export async function advance(dt, loop) {
+  await delay();
+  loop.advance(dt);
+}
+
 export function select(selector, elm) {
   function selectSingle(selector, elm) {
     const klassPattern = /\.(.*)/;
@@ -34,6 +39,14 @@ export function hasText(msg, dom, text) {
   is(msg, dom.textContent, text);
 }
 
+export function oneChild(msg, dom, n) {
+  hasChild('one ' + msg, dom, 1);
+}
+
+export function noChild(msg, dom, n) {
+  hasChild('no ' + msg, dom, 0);
+}
+
 export function hasChild(msg, dom, n) {
   is(msg, dom.children.length, n);
 }
@@ -56,7 +69,7 @@ export const withApp = makeAwaitable(async (fn, config) => {
       while (time > 0) {
         time -= dt;
         fn(dt);
-      }      
+      }
     };
   }
 
