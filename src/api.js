@@ -22,8 +22,8 @@ export default function start(ctrl) {
     leave(idx) {
       return anim(() => ctrl.leave(idx), ctrl.data);
     },
-    deal(o, handIndexes) {
-      return anim(() => ctrl.deal(o, handIndexes), ctrl.data);
+    deal(o, handIndexes, me) {
+      return anim(() => ctrl.deal(o, handIndexes, me), ctrl.data);
     },
     nextRound(o) {
       return anim(() => ctrl.nextRound(o), ctrl.data);

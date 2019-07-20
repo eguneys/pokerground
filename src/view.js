@@ -227,13 +227,16 @@ function renderCard(card, klass) {
   return h('div.card.' + [card.rank, card.suit, klass].join('.'));
 }
 
-function renderMiddleCard(card, highlight) {
+function renderMiddleCard(card, highlight, shouldShade) {
   var glow = (highlight || []).some(_ => _.rank === card.rank && _.suit === card.suit) ? h('div.card.glow') : null;
+
+  var shade = shouldShade ? h('div.card.shade') : null;
 
   return [
     glow,
     h('div.card.back'),
-    renderCard(card)];
+    renderCard(card),
+    shade];
 }
 
 function renderMiddle(ctrl) {
@@ -268,6 +271,8 @@ function renderHoles(ctrl) {
   var content = [];
   var sd = ctrl.data.showdown;
 
+  var me = ctrl.data.pov.me;
+
   var highlightHand,
       hand,
       pot = ctrl.anims.shareProgress;
@@ -279,15 +284,32 @@ function renderHoles(ctrl) {
 
   if (sd) {
     content = [
-      ...content, ...sd.hands.map((hand, i) => {
-        if (!hand) return null;
-        const { hole } = hand;
-        var seatIndex = lens.handIndexes(ctrl)[i];
-        return h('div.hole.' + numbers[seatIndex],
-                 hole.map(hole =>
-                   h('div', renderMiddleCard(hole, highlightHand))));
-      })
+      ...content, ...sd.hands
+        .map((hand, i) => {
+          if (!hand) return null;
+          const { hole } = hand;
+          var seatIndex = lens.handIndexes(ctrl)[i];
+          if (me && seatIndex === 0) return null;
+          return h('div.hole.' + numbers[seatIndex],
+                   hole.map(hole =>
+                     h('div', renderMiddleCard(hole, highlightHand))));
+        })
     ];
+  }
+
+  if (me) {
+    const hasFolded = !lens.isInvolved(ctrl, 0);
+
+    const dealProgress = ctrl.anims.dealProgress;
+    let hasDealt = !dealProgress || dealProgress[0] === 2;
+
+    if (hasDealt) {
+      content = [
+        ...content, h('div.hole.me.' + numbers[0],
+                      me.map(card =>
+                        h('div', renderMiddleCard(card, highlightHand, hasFolded))))
+      ];
+    }
   }
   
   return content;

@@ -2,7 +2,7 @@ import { configure } from './config';
 import * as lens from './lens';
 import { trans } from './trans';
 import { makeSerialPromise } from './util';
-import { readMiddle, readHands, readPlay } from './fen';
+import { readMiddle, readHands, readCards, readPlay } from './fen';
 import { ClockController } from './clock/clockCtrl';
 
 function callUserFunction(f, ...args) {
@@ -161,7 +161,9 @@ export default function Controller(state) {
 
     this.data.pot = 0;
 
-    this.data.pov.me = me;
+    if (me) {
+      this.data.pov.me = readCards(me);
+    }
     this.data.pov.handIndexes = handIndexes;
 
     // some kind of bug on snabbdom doesnt remove dealt cards

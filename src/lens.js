@@ -24,6 +24,10 @@ export function involved(ctrl) {
   return ctrl.data.involved;
 }
 
+export function isInvolved(ctrl, idx) {
+  return ctrl.data.involved.indexOf(idx) !== -1;
+}
+
 export function seats(ctrl) {
   return ctrl.data.pov.seats;
 }

@@ -9,7 +9,8 @@ source_dir = lila_dir + '/assets/cards/'
 dest_dir = lila_dir + '/assets/cards-css/'
 
 themes = [
-  ['pixel', 'svg']
+  ['pixel', 'svg'],
+  ['zynga', 'svg']
 ]
 types = {
   'svg' => 'svg+xml;base64,',
