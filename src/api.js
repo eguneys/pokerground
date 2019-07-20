@@ -1,14 +1,17 @@
-import TWEEN from '@tweenjs/tween.js';
+// import TWEEN from '@tweenjs/tween.js';
 
 import { configure } from './config';
 
-import { readMove as fenReadMove } from './fen';
+import { write as fenWrite, readMove as fenReadMove } from './fen';
 
 export default function start(ctrl) {
 
   return {
     set(config) {
       return anim((state) => configure(state, config), ctrl.data);
+    },
+    getFen() {
+      return fenWrite(ctrl);
     },
     sit(pov) {
       return anim(() => ctrl.sit(pov), ctrl.data);

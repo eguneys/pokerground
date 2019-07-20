@@ -86,6 +86,9 @@ export default function Controller(state) {
       unbindableTimeout(() => {
         this.anims.pot = undefined;
         this.anims.collectPots = false;
+        // maybe move this somewhere else
+        lens.acts(this).unshift([]);
+
         resolve();
       }, 500, reject);
     });
@@ -175,7 +178,6 @@ export default function Controller(state) {
 
   this.nextRound = ({ middle, pot }) => {
     this.data.middle = readMiddle(middle) || {};
-    lens.acts(this).unshift([]);
 
     const oldPot = this.data.pot;
     this.data.pot = pot;

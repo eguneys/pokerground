@@ -9,8 +9,7 @@
     "build-dev": "webpack --config webpack.config.js"
   },
   "dependencies": {
-    "@tweenjs/tween.js": "^17.2.0",
-    "snabbdom": "^0.7.2"
+    "snabbdom": "^0.7.3"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",

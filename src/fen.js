@@ -1,3 +1,5 @@
+import * as lens from './lens';
+
 const suits = { d: 'diamonds', h: 'hearts', 'c': 'clubs', s: 'spades' };
 
 const ranks = { 'A': 'ace', '2': 'two', '3': 'three', '4': 'four', '5': 'five', '6': 'six', '7': 'seven', '8': 'eight', '9': 'nine', 'T': 'ten', 'J': 'jack', 'Q': 'queen', 'K': 'king' };
@@ -114,4 +116,15 @@ export function readPlay(play) {
     pot: pots,
     acts
   };
+}
+
+function writeAct(act) {
+  return 'act';
+}
+
+export function write(ctrl) {
+  let res = "";
+  res += lens.acts(ctrl).map(_ => _.map(writeAct).join(' ')).join('\n');
+
+  return res;
 }

@@ -48,7 +48,8 @@ export function acts(ctrl) {
 }
 
 export function recentActions(ctrl) {
-  return ctrl.data.play.acts[0];
+  if (acts(ctrl).length === 0) return [];
+  return acts(ctrl)[0];
 }
 
 export function blinds(ctrl) {

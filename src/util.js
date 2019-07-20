@@ -56,11 +56,11 @@ export function translatePots(seats, index, reverse) {
         dealY = 400;
 
   var translateMapFive = [
-    [dealX + 50, -dealY-260],
-    [dealX + 150, -dealY-60],
-    [dealX + 150, dealY-400],
-    [dealX - 80, dealY-400],
-    [dealX - 80, -dealY-60]
+    [dealX + 40, -dealY-180],
+    [dealX + 140, -dealY+10],
+    [dealX + 130, dealY-400],
+    [dealX - 60, dealY-400],
+    [dealX - 70, -dealY+10]
   ];
 
   var multiply = reverse ? -1 : 1;

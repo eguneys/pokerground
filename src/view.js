@@ -106,7 +106,6 @@ function renderActions(ctrl) {
   var content = [];
   const lastActionsWithIndex = lens.takeLastActionsWithIndex(ctrl);
 
-
   if (lens.preflop(ctrl)) {
     const players = lens.players(ctrl);
     const bigBlindAction = lastActionsWithIndex.length < players;
