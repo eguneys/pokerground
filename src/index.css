@@ -1,3 +1,7 @@
+i {
+  font-style: normal;
+}
+
 .pg-wrap {
   position: relative;
 }
@@ -385,7 +389,7 @@ pg-table {
 }
 
 
-.seats {
+.hud {
   position: relative;
   width: 100%;
   height: 100%;

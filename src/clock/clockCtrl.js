@@ -55,6 +55,8 @@ export function ClockController(ctrl, opts) {
 
   this.timeRatio = (millis) =>
   Math.min(1, millis * this.timeRatioDivisor);
+
+  this.millisOf = () => this.times.millis;
   
   const maybeTick = (delta) => {
     if (this.running) {

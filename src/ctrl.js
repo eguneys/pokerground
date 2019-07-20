@@ -310,6 +310,18 @@ export default function Controller(state) {
     callUserFunction(this.data.events.sit, index);
   };
 
+  this.checked = (button) => {
+    return this.checkbox === button;
+  };
+
+  this.clickCheck = (button) => {
+    if (this.checked(button)) {
+      delete this.checkbox;
+    } else {
+      this.checkbox = button;
+    }
+  };
+
   this.trans = trans(state.i18n);
   
 }

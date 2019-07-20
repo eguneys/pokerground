@@ -4,12 +4,14 @@ import { numbers, numberFormat, chipsFormat, currencyFormat } from './util';
 
 import { renderClock } from './clock/clockView';
 
-import { bind } from './viewUtil';
+import { render as renderHud } from './view/hud';
+
+import { bind } from './view/util';
 
 import * as util from './util';
 
 import * as lens from './lens';
-import * as icons from './icons';
+import * as icons from './view/icons';
 
 function renderSeat(ctrl, seat, index) {
   const stack = lens.stack(ctrl, index);
@@ -18,7 +20,7 @@ function renderSeat(ctrl, seat, index) {
     h('div.seat.empty.'+numbers[index], {
       hook: bind('click', () => ctrl.clickSit(index))
     }, [
-      icons.sit
+      icons.sit()
     ]) :
     h('div.seat.' + numbers[index], [
       renderClock(ctrl, seat, index),
@@ -67,13 +69,13 @@ function renderAction(ctrl, type, index, klass, amount) {
   case 'raise':
     klass += '.raise';
     content = [
-      icons.raise,
+      icons.raise(),
       renderAmount(amount)];
     break;
   case 'allin':
     klass += '.allin';
     content = [
-      icons.raise,
+      icons.raise(),
       renderAmount(amount)];
     break;
   case 'call':
@@ -85,13 +87,13 @@ function renderAction(ctrl, type, index, klass, amount) {
   case 'fold':
     klass += '.fold';
     content = [
-      icons.fold,
+      icons.fold(),
       amount ? renderAmount(amount):null
     ];
     break;
   case 'check':
     klass += '.check';
-    content = [icons.check];
+    content = [icons.check()];
     break;
   }
   return h('div.action.' + klass, {
@@ -144,14 +146,14 @@ function renderPots(ctrl) {
   var sidePot = ctrl.anims.shareProgress;
 
   var mainContent = amount > 0 ? h('div.pot', [
-    icons.chip,
+    icons.chip(),
     h('span', currencyFormat(chipsFormat(amount), ctrl.data.currency))]) : null;
 
   var sideContent = sidePot ? sidePot.involved.map(index =>
     h('div.pot', {
       style: potShareStyle(ctrl, index)
     }, [
-      icons.chip,
+      icons.chip(),
       h('span', currencyFormat(chipsFormat(sidePot.amount / sidePot.involved.length), ctrl.data.currency))])
   ) : [];
 
@@ -346,7 +348,10 @@ function renderTable(ctrl) {
     renderPots(ctrl),
     renderCards(ctrl),
     renderActions(ctrl),
-    renderSeats(ctrl)
+    h('div.hud', [
+      renderSeats(ctrl),
+      ...renderHud(ctrl)
+    ])
   ];
 }
 

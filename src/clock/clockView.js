@@ -7,6 +7,8 @@ export function renderClock(ctrl, seat, index) {
 
   const setEl = (el) => {
     clock.elements[index] = el;
+    el.style['stroke-dashoffset'] = clock.timeRatio(clock.millisOf()) * 283 + '%';
+
   };
 
   return h('div.timer', [

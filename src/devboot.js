@@ -1,4 +1,5 @@
 require('./index.css');
+require('./hud.css');
 require('./theme.css');
 const main = require('./main');
 

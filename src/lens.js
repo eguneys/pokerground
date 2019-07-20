@@ -47,6 +47,14 @@ export function stack(ctrl, idx) {
   return ctrl.data.play.stacks[handIndex];
 }
 
+export function mePlaying(ctrl) {
+  return !!ctrl.data.pov.me;
+}
+
+export function meTurn(ctrl) {
+  return mePlaying(ctrl) && toAct(ctrl) === 0;
+}
+
 export function acts(ctrl) {
   return ctrl.data.play.acts;
 }

@@ -1,0 +1,72 @@
+.mecontrols {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 36%;
+  height: 12%;
+
+  display: flex;
+  justify-content: space-around;
+}
+
+.mecontrols > div {
+  display: flex;
+  flex-flow: column;
+}
+
+.mecontrols > div > span {
+  font-size: 0.9em;
+  text-align: center;
+}
+
+.mecontrols > div > i {
+  font-size: 1.2em;
+  padding: 4px 8px;
+  margin: 0 auto;
+  border-radius: 50%;
+  text-align: center;
+  font-weight: bold;
+}
+
+.mecontrols > div > i,
+.mecontrols > div > span {
+  color: #ddd;
+}
+
+.mecontrols > div > i {
+  border: 1px solid #faa;
+}
+
+.mecontrols > div.checked > i {
+  border: 1px solid rgba(0, 0, 0, 0);
+}
+
+.mecontrols > .fold.checked > span {
+  color: rgba(217, 30, 24, 1);
+}
+
+.mecontrols > .callany.checked > span,
+.mecontrols > .checkfold.checked > span,
+.mecontrols > .check.checked > span,
+.mecontrols > .call.checked > span {
+  color: rgba(34, 167, 240, 1);
+}
+
+.mecontrols > .raise.checked > span {
+  color: rgba(240, 255, 0, 1);
+}
+
+.mecontrols > .fold.checked > i {
+  background: rgba(217, 30, 24, 1);
+}
+
+.mecontrols > .callany.checked > i,
+.mecontrols > .checkfold.checked > i,
+.mecontrols > .check.checked > i,
+.mecontrols > .call.checked > i {
+  background: rgba(34, 167, 240, 1);
+}
+
+.mecontrols > .raise.checked > i {
+  background: rgba(240, 255, 0, 1);
+}
