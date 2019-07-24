@@ -25,6 +25,13 @@ pg-table {
   cursor: pointer;
 }
 
+
+.clickables {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .card {
   width: 100%;
   height: 100%;
@@ -386,13 +393,6 @@ pg-table {
 
 .actions .action.collect div span {
   animation: popup-action-text .1s ease forwards reverse;
-}
-
-
-.hud {
-  position: relative;
-  width: 100%;
-  height: 100%;
 }
 
 .seats .seat {

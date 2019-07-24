@@ -348,9 +348,9 @@ function renderTable(ctrl) {
     renderPots(ctrl),
     renderCards(ctrl),
     renderActions(ctrl),
-    h('div.hud', [
+    h('div.clickables', [
       renderSeats(ctrl),
-      ...renderHud(ctrl)
+      renderHud(ctrl)
     ])
   ];
 }

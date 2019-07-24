@@ -1,4 +1,16 @@
-     var config = {
+### Raise Amount
+
+Blinds | last raise | Total_Pot | min | 50% | 75% | 100% |
+
+60 300 390 540
+
+
+
+### Config
+
+    
+
+    var config = {
        currency: '$',
        fen: '70b 50B 100 100 100!20(30 50 . . .)~10!0\nR20 R20',
        clock: {

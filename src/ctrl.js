@@ -4,6 +4,7 @@ import { trans } from './trans';
 import { makeSerialPromise } from './util';
 import { readMiddle, readHands, readCards, readPlay } from './fen';
 import { ClockController } from './clock/clockCtrl';
+import { RaiseController } from './raiseCtrl';
 
 function callUserFunction(f, ...args) {
   if (f) setTimeout(() => f(...args), 1);
@@ -21,6 +22,8 @@ export default function Controller(state) {
       console.log('flag');
     }
   });
+
+  this.raiseCtrl = new RaiseController(this, {});
 
   const addAct = (act) => {
     lens.recentActions(this).push(act);
@@ -78,14 +81,13 @@ export default function Controller(state) {
     }, Promise.resolve());
   };
 
-  const beginCollectPots = (oldPot) => {
-    this.anims.pot = oldPot;
+  const beginCollectPots = () => {
     this.anims.collectPots = true;
 
     return new Promise((resolve, reject) => {
       unbindableTimeout(() => {
-        this.anims.pot = undefined;
         this.anims.collectPots = false;
+
         // maybe move this somewhere else
         lens.acts(this).unshift([]);
 
@@ -178,16 +180,13 @@ export default function Controller(state) {
     return beginDeal();
   };
 
-  this.nextRound = ({ middle, pot }) => {
+  this.nextRound = ({ middle }) => {
     this.data.middle = readMiddle(middle) || {};
-
-    const oldPot = this.data.pot;
-    this.data.pot = pot;
 
     this.clearClock();
     clearAnims();
 
-    return beginCollectPots(oldPot)
+    return beginCollectPots()
       .then(beginDelay);
   };
 
@@ -195,14 +194,11 @@ export default function Controller(state) {
     this.data.showdown = { pots, hands: readHands(hands) };
     this.data.middle = readMiddle(middle);
 
-    const oldPot = this.data.pot;
-    this.data.pot = pots.reduce((acc, _) => _.amount + acc, 0);
-
     this.clearClock();
     clearAnims();
 
     return beginHideCards()
-      .then(beginCollectPots(oldPot))
+      .then(beginCollectPots())
       .then(beginDelay)
       .then(beginRevealCards)
       .then(beginSharePots);
@@ -211,13 +207,10 @@ export default function Controller(state) {
   this.endRound = ({ pots }) => {
     this.data.showdown = { pots, hands: [] };
 
-    const oldPot = this.data.pot;
-    this.data.pot = pots.reduce((acc, _) => _.amount + acc, 0);
-
     this.clearClock();
     clearAnims();
 
-    return beginCollectPots(oldPot)
+    return beginCollectPots()
       .then(beginSharePots);
   };
 
@@ -234,25 +227,22 @@ export default function Controller(state) {
     return Promise.resolve();
   };
 
-  this.call = (call, stack) => {
-    lens.setStack(this, stack);
+  this.call = (call) => {
     addAct({ 'act': 'call', amount: call });
     return Promise.resolve();
   };
 
-  this.raise = (raise, stack) => {
-    lens.setStack(this, stack);
+  this.raise = (raise) => {
     addAct({ 'act': 'raise', amount: raise });
     return Promise.resolve();
   };
 
   this.allin = (allin) => {
-    lens.setStack(this, 0);
     addAct({ 'act': 'allin', amount: allin });
     return Promise.resolve();
   };
 
-  this.move = (move, stack) => {
+  this.move = ({ move }) => {
     let lp;
     switch(move.act) {
     case 'check':
@@ -262,13 +252,13 @@ export default function Controller(state) {
       lp = this.fold();
       break;
     case 'call':
-      lp = this.call(move.amount, stack);
+      lp = this.call(move.call);
       break;
     case 'allin':
       lp = this.allin(move.amount);
       break;
     case 'raise':
-      lp = this.raise(move.amount, stack);
+      lp = this.raise(move.call, move.bet, move.raiseto);
       break;
     default:
       lp = Promise.reject("bad move");

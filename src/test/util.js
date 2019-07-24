@@ -11,6 +11,11 @@ export async function deal(fen, indexes, api, loop) {
   }
 }
 
+export async function move(o, api, loop) {
+  api.move(o);
+  await advance(1, loop);
+}
+
 export async function nextRound(o, api, loop) {
   api.nextRound(o);
   await advance(500, loop);

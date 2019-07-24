@@ -262,7 +262,7 @@
    })();
 
    function apiMove(o) {
-     let lastPromise = api.move(o.uci, o.stack);
+     let lastPromise = api.move(o);
      if (o.next) {
        lastPromise = lastPromise.then(apiNextRound);
      }
@@ -292,6 +292,7 @@
    onClick(document.getElementById("raise"), () => apiMove({
      uci: 'R10000',
      stack: 9000,
+     pot: 10,
      clock
    }));
 
@@ -299,6 +300,7 @@
      apiMove({
        uci: 'C1000',
        stack: 9000,
+       pot: 20,
        clock,
        next: true
      })
@@ -306,17 +308,20 @@
 
    onClick(document.getElementById("allin"), () => apiMove({
      uci: 'A10000',
+     pot: 10000,
      clock,
      showdown: true
    }));
 
    onClick(document.getElementById("check"), () => apiMove({
      uci: 'H',
+     pot: 10000,
      clock
    }));
 
    onClick(document.getElementById("fold"), () => apiMove({
      uci: 'F',
+     pot: 10000,
      clock,
      end: true
    }));

@@ -1,5 +1,6 @@
 require('./index.css');
 require('./hud.css');
+require('./slider.css');
 require('./theme.css');
 const main = require('./main');
 

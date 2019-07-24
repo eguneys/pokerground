@@ -19,3 +19,7 @@ export const call = () => h('i', 'C');
 export const callany = () => h('i', 'C');
 
 export const chip = icon('help-buoy');
+
+export const plus = icon('add');
+
+export const minus = icon('remove');

@@ -64,6 +64,18 @@ export function recentActions(ctrl) {
   return acts(ctrl)[0];
 }
 
+export function maxRaise(ctrl) {
+  return 100;
+}
+
+export function minRaise(ctrl) {
+  return 0;
+}
+
+export function pot(ctrl) {
+  return 30;
+}
+
 export function blinds(ctrl) {
   return ctrl.data.play.blinds;
 }

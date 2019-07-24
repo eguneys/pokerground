@@ -37,9 +37,9 @@ export default function start(ctrl) {
     setClock(o) {
       return anim(() => ctrl.setClock(o), ctrl.data);
     },
-    move(uci, stack) {
-      const move = fenReadMove(uci);
-      return anim(() => ctrl.move(move, stack), ctrl.data);
+    move(o) {
+      const move = fenReadMove(o.uci);
+      return anim(() => ctrl.move({ move, ...o }), ctrl.data);
     },
     check() {
       return anim(() => ctrl.check(), ctrl.data);
