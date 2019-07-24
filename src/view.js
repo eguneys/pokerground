@@ -343,8 +343,15 @@ function renderCards(ctrl) {
   return h('div.cards', content);
 }
 
+function renderBackground(ctrl) {
+  return h('div.background', [
+    h('div.table-img')
+  ]);
+}
+
 function renderTable(ctrl) {
   return [
+    renderBackground(ctrl),
     renderPots(ctrl),
     renderCards(ctrl),
     renderActions(ctrl),

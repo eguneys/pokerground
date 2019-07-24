@@ -1,9 +1,9 @@
 ### Raise Amount
 
-Blinds | last raise | Total_Pot | min | 50% | 75% | 100% |
-
-60 300 390 540
-
+initial preflop min 3bb 5bb allin
+initial bet min 1/2 pot allin
+min 1/2 3/4 pot
+reraise min 2x 4x allin
 
 
 ### Config
