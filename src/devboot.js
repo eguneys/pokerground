@@ -1,4 +1,5 @@
 require('./index.css');
+require('./position.css');
 require('./hud.css');
 require('./slider.css');
 require('./theme.css');

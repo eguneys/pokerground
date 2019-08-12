@@ -45,21 +45,22 @@ pg-table {
 
 .table-img {
   position: relative;
-  width: 80%;
-  height: 70%;
+  width: 70%;
+  height: 50%;
   text-align: center;
   background: #40407a;
   border-radius: 200px;
   border: solid 10px #2c2c54;
+  transform: perspective(40em) rotateX(20deg);
 }
 
 .table-img:before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0px;
+  left: 0px;
+  width: calc(100% - 0px);
+  height: calc(100% + 0px);
   border-radius: 200px;
   box-shadow: inset 3px 5px 5px -5px, inset -3px 5px 5px -5px;
 }
@@ -243,8 +244,8 @@ pg-table {
 
 .cards .hand .back {
   position: absolute;
-  height: 80%;
-  width: 38%;
+  height: 70%;
+  width: 28%;
 }
 
 .cards .hand.dealer .back:nth-child(1) {
@@ -253,58 +254,6 @@ pg-table {
 .cards .hand.dealer .back:nth-child(2) {
   transform: translateY(10%);
 }
-
-.cards .hand.dealer {
-  bottom: 70%;
-  left: 50%;
-}
-
-.five .cards .hand.one {
-  bottom: 28%;
-  left: 50%;
-}
-.five .cards .hand.two {
-  bottom: 32%;
-  left: 25%;
-  transform: rotate(40deg);
-}
-.five .cards .hand.three {
-  bottom: 66%;
-  left: 30%;
-  transform: rotate(-40deg);
-}
-.five .cards .hand.four {
-  bottom: 60%;
-  left: 68%;
-  transform: rotate(30deg);
-}
-.five .cards .hand.five {
-  bottom: 36%;
-  left: 70%;
-  transform: rotate(-40deg);
-}
-
-.five .cards .button.one {
-  bottom: 32%;
-  left: 50%;
-}
-.five .cards .button.two {
-  bottom: 40%;
-  left: 25%;
-}
-.five .cards .button.three {
-  bottom: 63%;
-  left: 28%;
-}
-.five .cards .button.four {
-  bottom: 63%;
-  left: 72%;
-}
-.five .cards .button.five {
-  bottom: 40%;
-  left: 80%;
-}
-
 
 .actions {
   position: absolute;
@@ -315,37 +264,15 @@ pg-table {
 }
 
 .actions .action {
+  width: 25%;
   position: absolute;
   display: flex;
   z-index: 2;
 
-  min-width: 20%;
-
-  font-size: 1.2em;
+  font-size: 1em;
   color: white;
 
   text-align: center;
-}
-
-.five .actions .action.one {
-  bottom: 30%;
-  left: 50%;
-}
-.five .actions .action.two {
-  bottom: 40%;
-  left: 25%;
-}
-.five .actions .action.three {
-  bottom: 63%;
-  left: 28%;
-}
-.five .actions .action.four {
-  bottom: 63%;
-  left: 72%;
-}
-.five .actions .action.five {
-  bottom: 40%;
-  left: 75%;
 }
 
 .action .call {
@@ -358,6 +285,8 @@ pg-table {
 }
 
 .action i {
+  width: 20px;
+  height: 20px;
   text-align: center;
   font-weight: bold;
 }
@@ -366,27 +295,22 @@ pg-table {
 .action.big-blind i,
 .action.raise i,
 .action.allin i  {
-  padding: 2px 8px;
   margin-right: 4px;
   background: rgba(240, 255, 0, 1);
   color: black;
 }
 
 .action.fold i {
-  padding: 2px 8px;
   background: rgba(217, 30, 24, 1);
   color: black;
 }
 
 .action.call i {
-  padding: 2px 8px;
-  margin-right: 4px;
   background: rgba(34, 167, 240, 1);
   color: black;
 }
 
 .action.check i {
-  padding: 4px 8px;
   background: rgba(34, 167, 240, 1);
   color: black;
 }
@@ -447,8 +371,8 @@ pg-table {
   font-size: 60px;
   color: white;
 
-  height: 20%;
-  width: 14%;
+  height: 16%;
+  width: 10%;
   text-align: center;
   transform: translateX(-50%);
   
@@ -456,32 +380,6 @@ pg-table {
 
 .seats .seat .timer {
   animation: bubble .5s;
-}
-
-.five .seats .seat.one,
-.five .cards .hole.one {
-  bottom: 8%;
-  left: 50%;
-}
-.five .seats .seat.two,
-.five .cards .hole.two {
-  bottom: 18%;
-  left: 20%;
-}
-.five .seats .seat.three,
-.five .cards .hole.three {
-  bottom: 75%;
-  left: 28%;
-}
-.five .seats .seat.four,
-.five .cards .hole.four {
-  bottom: 75%;
-  left: 72%;
-}
-.five .seats .seat.five,
-.five .cards .hole.five {
-  bottom: 18%;
-  left: 80%;
 }
 
 .seats .seat.empty:active {
@@ -517,7 +415,7 @@ pg-table {
 .seats .seat img {
   width: 100%;
   height: auto;
-  margin-bottom: -5px;
+  margin-bottom: -9px;
   border-radius: 50%;
 }
 
@@ -530,9 +428,9 @@ pg-table {
 
 .seats .seat .timer {
   position: absolute;
-  top: -12px;
-  left: -12px;
-  width: calc(100% + 24px);
+  top: -10px;
+  left: -10px;
+  width: calc(100% + 20px);
   /* height: calc(100% + 16%); */
 }
 

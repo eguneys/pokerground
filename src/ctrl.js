@@ -19,7 +19,7 @@ export default function Controller(state) {
 
   this.clock = new ClockController(this, {
     onFlag: () => {
-      console.log('flag');
+      callUserFunction(this.data.events.flag);
     }
   });
 
@@ -75,8 +75,8 @@ export default function Controller(state) {
           unbindableTimeout(() => {
             this.anims.dealProgress[i] = 2;
             resolve();
-          }, 100, reject);
-        }, 100, reject);
+          }, 50, reject);
+        }, 50, reject);
       });
     }, Promise.resolve());
   };
@@ -310,6 +310,10 @@ export default function Controller(state) {
     } else {
       this.checkbox = button;
     }
+  };
+
+  this.clickChecked = (button) => {
+    callUserFunction(this.data.events[button], this.raiseCtrl.value);
   };
 
   this.trans = trans(state.i18n);

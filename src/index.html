@@ -48,7 +48,7 @@
          margin: auto;
          width: 90%;
          height: 0;
-         padding-bottom: 60%;
+         padding-bottom: 50%;
      }
     </style>
 </head>
@@ -88,7 +88,7 @@
        promise.then(result => func().then(Array.prototype.concat.bind(result))),
                   Promise.resolve([]))
 
-   let handIndexes = [0, 1, 2, 3, 4];
+   let handIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8];
    let me;
 
    const api = init();
@@ -99,10 +99,13 @@
    }
 
    function init() {
+
+     const fiveFen = '70b 50 100 100 100!20(. . . . .)~10!0';
+     const nineFen = '70b 50 100 100 100 100 100 100 100!20(. . . . . . . . .)~10!0\nR10 R10 R100000 R10 C C C C';
      
      var config = {
        currency: '$',
-       fen: '70b 50 100 100 100!20(. . . . .)~10!0',
+       fen: nineFen,
        clock: {
          running: true,
          initial: 60,
@@ -111,14 +114,34 @@
        pov: {
          seats: [{ img: 'https://i.pravatar.cc/300?1' },
                  { img: 'https://i.pravatar.cc/300?2' },
-                 { img: 'https://i.pravatar.cc/300?2' },
-                 { img: 'https://i.pravatar.cc/300?2' },
-                 { img: 'https://i.pravatar.cc/300?3' }],
+                 { img: 'https://i.pravatar.cc/300?3' },
+                 { img: 'https://i.pravatar.cc/300?4' },
+                 { img: 'https://i.pravatar.cc/300?5' },
+                 { img: 'https://i.pravatar.cc/300?6' },
+                 { img: 'https://i.pravatar.cc/300?7' },
+                 { img: 'https://i.pravatar.cc/300?8' },
+                 { img: 'https://i.pravatar.cc/300?9' }],
          handIndexes: handIndexes.slice(0)
        },
        events: {
          sit: (index) => {
            apiSit(index);
+         },
+         fold: () => {
+           apiMove({
+             uci: 'F',
+             stack: 9000,
+             pot: 10,
+             clock
+           });
+         },
+         flag: () => {
+           /* apiMove({
+            *   uci: 'F',
+            *   stack: 9000,
+            *   pot: 10,
+            *   clock
+            * }); */
          }
        }
      };
@@ -173,8 +196,12 @@
 
    const apiDeal = (() => {
      var fens = {
-       5: ['60b 40s 100B 100, 100!20(. 5 10 . .)~10!0\n',
-           '70 50b 100s 100B, 100!20(. . 5 10 .)~10!0\n'],
+       9: ['60b 40s 100B 100 100 100 100 100 100!20(. 5 10 . . . . . .)~10!0\n'],
+       8: ['60b 40s 100B 100 100 100 100 100!20(. 5 10 . . . . .)~10!0\n'],
+       7: ['60b 40s 100B 100 100 100 100!20(. 5 10 . . . .)~10!0\n'],
+       6: ['60b 40s 100B 100 100 100!20(. 5 10 . . .)~10!0\n'],
+       5: ['60b 40s 100B 100 100!20(. 5 10 . .)~10!0\n',
+           '70 50b 100s 100B 100!20(. . 5 10 .)~10!0\n'],
        4: ['70 50 100b 100B!20(. . 5 10)~10!0\n'],
        3: ['70 50 100b!20(. . .)~10!0\n'],
        2: ['70B, 100b!20(10 5)~10!0\n',
@@ -194,8 +221,8 @@
    const apiShowdownMuck = () => {
      var showdown = {
        pots: [
-         { amount: 150000, involved: [handIndexes[0], handIndexes[1]]},
-         { amount: 1500, involved: [handIndexes[1]]},
+         { amount: 150000, involved: [handIndexes[0], handIndexes[6]]},
+         { amount: 1500, involved: [handIndexes[8]]},
        ]
      };
 

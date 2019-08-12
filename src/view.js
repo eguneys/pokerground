@@ -203,7 +203,6 @@ function renderHands(ctrl) {
   var ins = lens.involved(ctrl);
 
   var dealProgress = ctrl.anims.dealProgress;
-
   content = [
     h('div.hand.dealer', [
       h('div.card.back'),

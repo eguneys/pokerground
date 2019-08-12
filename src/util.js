@@ -29,11 +29,21 @@ export const numberFormat = (function() {
 export const numbers = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 
 export function translateDeal(seats, index) {
-  const translateMapNine = [
-  ];
 
   const dealX = 0,
         dealY = 600;
+
+  const translateMapNine = [
+    [dealX, -dealY],
+    [dealX + 500, -dealY-10],
+    [dealX + 600, -dealY-300],
+    [900, 560],
+    [660, 222],
+    [-760, 82],
+    [-940, 650],
+    [-140, -1050],
+    [dealX - 460, -dealY-100]
+  ];
 
   const translateMapFive = [
     [dealX, -dealY],
@@ -50,6 +60,15 @@ export function translateDeal(seats, index) {
 
 export function translatePots(seats, index, reverse) {
   var translateMapNine = [
+    [0, -425],
+    [62, -425],
+    [100, -350],
+    [100, -60],
+    [52, 56],
+    [-52, 56],
+    [-100, -60],
+    [-100, -350],
+    [-62, -425]
   ];
 
   const dealX = 0,
@@ -67,5 +86,5 @@ export function translatePots(seats, index, reverse) {
   
   var translate = (seats === 5) ? translateMapFive[index]:translateMapNine[index];
 
-  return `translateX(${translate[0] * multiply - 50}%) translateY(${translate[1] * multiply}%)`;
+  return `translateX(${translate[0] * multiply * Math.abs(multiply)}%) translateY(${translate[1] * multiply}%)`;
 }

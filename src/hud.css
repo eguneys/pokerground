@@ -100,7 +100,8 @@
 
 .mecontrols > div > i {
   font-size: 1.2em;
-  padding: 4px 10px;
+  padding: 2px 2px;
+  width: 25px;
   margin: 0 auto;
   border-radius: 50%;
   text-align: center;
