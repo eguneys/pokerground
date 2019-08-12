@@ -46,11 +46,11 @@ export function translateDeal(seats, index) {
   ];
 
   const translateMapFive = [
-    [dealX, -dealY],
-    [dealX + 120, -dealY-100],
-    [dealX + 500, 220],
-    [dealX - 520, 120],
-    [dealX - 20, -dealY-100]
+    [-90, -640],
+    [265, -840],
+    [610, 340],
+    [-790, 300],
+    [-265, -840]
   ];
   
   var translate = (seats === 5) ? translateMapFive[index]:translateMapNine[index];
@@ -75,14 +75,14 @@ export function translatePots(seats, index, reverse) {
         dealY = 400;
 
   var translateMapFive = [
-    [dealX + 40, -dealY-180],
-    [dealX + 140, -dealY+10],
-    [dealX + 130, dealY-400],
-    [dealX - 60, dealY-400],
-    [dealX - 70, -dealY+10]
+    [-10, -518],
+    [88, -348],
+    [78, 86],
+    [-98, 86],
+    [-110, -348]
   ];
 
-  var multiply = reverse ? -1.5 : 1;
+  var multiply = reverse ? -1.2 : 1;
   
   var translate = (seats === 5) ? translateMapFive[index]:translateMapNine[index];
 

@@ -144,6 +144,7 @@ export default function Controller(state) {
   this.sit = (pov) => {
     this.data.pov.seats = pov.seats;
     this.data.pov.handIndexes = pov.handIndexes;
+    this.data.seats = pov.seats.length;
     this.refreshClock();
   };
 

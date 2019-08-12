@@ -134,8 +134,13 @@
 }
 .five .seats .seat.two,
 .five .cards .hole.two {
-  bottom: 18%;
+  bottom: 25%;
   left: 20%;
+}
+.five .seats .seat.five,
+.five .cards .hole.five {
+  bottom: 25%;
+  left: 80%;
 }
 .five .seats .seat.three,
 .five .cards .hole.three {
@@ -147,11 +152,7 @@
   bottom: 75%;
   left: 72%;
 }
-.five .seats .seat.five,
-.five .cards .hole.five {
-  bottom: 18%;
-  left: 80%;
-}
+
 
 .five .actions .action.one {
   bottom: 30%;

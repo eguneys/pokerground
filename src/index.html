@@ -88,8 +88,34 @@
        promise.then(result => func().then(Array.prototype.concat.bind(result))),
                   Promise.resolve([]))
 
+   let seats;
    let handIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8];
    let me;
+
+
+   const handIndexesNine = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+   const handIndexesFive = [0, 1, 2, 3, 4];
+
+   const fiveFen = '70b 50 100 100 100!20(. . . . .)~10!0\nR10 R10 R100000 C C';
+   const nineFen = '70b 50 100 100 100 100 100 100 100!20(. . . . . . . . .)~10!0\nR10 R10 R100000 R10 C C C C';
+
+
+   const fiveSeats = [{ img: 'https://i.pravatar.cc/300?3' },
+                      { img: 'https://i.pravatar.cc/300?3' },
+                      { img: 'https://i.pravatar.cc/300?3' },
+                      { img: 'https://i.pravatar.cc/300?3' },
+                      { img: 'https://i.pravatar.cc/300?3' }];
+
+   const nineSeats = [{ img: 'https://i.pravatar.cc/300?1' },
+                      { img: 'https://i.pravatar.cc/300?2' },
+                      { img: 'https://i.pravatar.cc/300?3' },
+                      { img: 'https://i.pravatar.cc/300?4' },
+                      { img: 'https://i.pravatar.cc/300?5' },
+                      { img: 'https://i.pravatar.cc/300?6' },
+                      { img: 'https://i.pravatar.cc/300?7' },
+                      { img: 'https://i.pravatar.cc/300?8' },
+                      { img: 'https://i.pravatar.cc/300?9' }];
+   
 
    const api = init();
    tests();
@@ -99,10 +125,12 @@
    }
 
    function init() {
+     /* seats = fiveSeats
+      * handIndexes = handIndexesFive; */
 
-     const fiveFen = '70b 50 100 100 100!20(. . . . .)~10!0';
-     const nineFen = '70b 50 100 100 100 100 100 100 100!20(. . . . . . . . .)~10!0\nR10 R10 R100000 R10 C C C C';
-     
+     seats = nineSeats;
+     handIndexes = handIndexesNine;
+
      var config = {
        currency: '$',
        fen: nineFen,
@@ -112,15 +140,7 @@
          times: 60,
        },
        pov: {
-         seats: [{ img: 'https://i.pravatar.cc/300?1' },
-                 { img: 'https://i.pravatar.cc/300?2' },
-                 { img: 'https://i.pravatar.cc/300?3' },
-                 { img: 'https://i.pravatar.cc/300?4' },
-                 { img: 'https://i.pravatar.cc/300?5' },
-                 { img: 'https://i.pravatar.cc/300?6' },
-                 { img: 'https://i.pravatar.cc/300?7' },
-                 { img: 'https://i.pravatar.cc/300?8' },
-                 { img: 'https://i.pravatar.cc/300?9' }],
+         seats: seats.slice(0),
          handIndexes: handIndexes.slice(0)
        },
        events: {
@@ -153,15 +173,12 @@
    }
 
    const apiSit = (index) => {
+     seats = nineSeats;
      handIndexes = [3, 4];
      me = 'As Ad';
 
      const pov = {
-       seats: [{ img: 'https://i.pravatar.cc/300?1' },
-               null,
-               null,
-               { img: 'https://i.pravatar.cc/300?2' },
-               { img: 'https://i.pravatar.cc/300?3' }],
+       seats: seats.slice(0),
        handIndexes: handIndexes.slice(0)
      };
      api.sit(pov);
@@ -221,8 +238,8 @@
    const apiShowdownMuck = () => {
      var showdown = {
        pots: [
-         { amount: 150000, involved: [handIndexes[0], handIndexes[6]]},
-         { amount: 1500, involved: [handIndexes[8]]},
+         { amount: 150000, involved: [handIndexes[0], handIndexes[2]]},
+         { amount: 1500, involved: [handIndexes[1]]},
        ]
      };
 
