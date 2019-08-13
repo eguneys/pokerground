@@ -44,46 +44,46 @@
   left: 68%;
 }
 
-.nine .cards .hand.one {
+.nine .cards .hand.one .card {
   bottom: 30%;
   left: 48%;
 }
-.nine .cards .hand.two {
+.nine .cards .hand.two .card {
   bottom: 33%;
   left: 33%;
   transform: rotate(10deg);
 }
-.nine .cards .hand.nine {
+.nine .cards .hand.nine .card {
   bottom: 35%;
   left: 65%;
   transform: rotate(-20deg);
 }
-.nine .cards .hand.three {
+.nine .cards .hand.three .card {
   bottom: 38%;
   left: 17%;
   transform: rotate(40deg);
 }
-.nine .cards .hand.eight {
+.nine .cards .hand.eight .card {
   bottom: 44%;
   left: 78%;
   transform: rotate(-60deg);
 }
-.nine .cards .hand.four {
+.nine .cards .hand.four .card {
   bottom: 60%;
   left: 20%;
   transform: rotate(-50deg);
 }
-.nine .cards .hand.seven {
+.nine .cards .hand.seven .card {
   bottom: 54%;
   left: 76%;
   transform: rotate(50deg);
 }
-.nine .cards .hand.five {
+.nine .cards .hand.five .card {
   bottom: 64%;
   left: 32%;
   transform: rotate(-30deg);
 }
-.nine .cards .hand.six {
+.nine .cards .hand.six .card {
   bottom: 62%;
   left: 65%;
   transform: rotate(10deg);
@@ -223,7 +223,8 @@
 }
 
 
-.cards .hand.dealer {
+.cards .hand.dealer,
+.nine .cards .hands.collect .hand .card {
   bottom: 64%;
   left: 48%;
 }

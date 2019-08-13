@@ -35,9 +35,10 @@ function renderSeats(ctrl) {
 }
 
 const actionStyle = (ctrl, index) => ({
-  transition: 'transform .8s, opacity .8s',
+  transition: 'bottom .8s, left .8s, opacity .8s',
   remove: {
-    transform: util.translatePots(ctrl.data.seats, index),
+    bottom: '60%',
+    left: '48%',
     opacity: '0.4'
   }
 });
@@ -134,10 +135,10 @@ function renderActions(ctrl) {
 
 function renderPots(ctrl) {
   const potShareStyle = (ctrl, index) => ({
-    transition: 'transform 1s, opacity 1s',
+    transition: 'bottom 1s, left 1s, opacity 1s',
     delayed: {
+      ...util.posDeal(ctrl, index),
       opacity: 0.8,
-      transform: util.translatePots(ctrl.data.seats, index, true)
     }
   });
 
@@ -183,13 +184,15 @@ const dealRotatingStyle = (() => {
 
 const dealBackStyle = (ctrl, index, rotation) => {
   return {
-    transform: util.translateDeal(ctrl.data.seats, index) + ' rotate(0deg)',
-    transition: 'transform .3s, opacity .3s',
+    bottom: '64%',
+    left: '48%',
     delayed: {
-      transform: `translateX(0) translateY(0) rotate(${rotation}deg)`
+      ...util.posDeal(ctrl.data.seats, index),
+      transform: `rotate(${rotation}deg)`
     },
     remove: {
-      transform: util.translateDeal(ctrl.data.seats, index),
+      bottom: '64%',
+      left: '48%',
       opacity: '0.2'
     }
   };

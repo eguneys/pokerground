@@ -28,63 +28,27 @@ export const numberFormat = (function() {
 
 export const numbers = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 
-export function translateDeal(seats, index) {
 
-  const dealX = 0,
-        dealY = 600;
-
-  const translateMapNine = [
-    [dealX, -dealY],
-    [dealX + 500, -dealY-10],
-    [dealX + 600, -dealY-300],
-    [900, 560],
-    [660, 222],
-    [-760, 82],
-    [-940, 650],
-    [-140, -1050],
-    [dealX - 460, -dealY-100]
+export function posDeal(seats, index) {
+  const posMapNine = [
+    [30, 48],
+    [33, 33],
+    [38, 17],
+    [60, 20],
+    [64, 32],
+    [62, 65],
+    [54, 76],
+    [44, 78],
+    [35, 65]
   ];
 
-  const translateMapFive = [
-    [-90, -640],
-    [265, -840],
-    [610, 340],
-    [-790, 300],
-    [-265, -840]
-  ];
-  
-  var translate = (seats === 5) ? translateMapFive[index]:translateMapNine[index];
-
-  return `translateX(${translate[0]}%) translateY(${translate[1]}%)`;
-}
-
-export function translatePots(seats, index, reverse) {
-  var translateMapNine = [
-    [0, -425],
-    [62, -425],
-    [100, -350],
-    [100, -60],
-    [52, 56],
-    [-52, 56],
-    [-100, -60],
-    [-100, -350],
-    [-62, -425]
+  const posMapFive = [
   ];
 
-  const dealX = 0,
-        dealY = 400;
+  var pos = (seats === 5) ? posMapFive[index]:posMapNine[index];
 
-  var translateMapFive = [
-    [-10, -518],
-    [88, -348],
-    [78, 86],
-    [-98, 86],
-    [-110, -348]
-  ];
-
-  var multiply = reverse ? -1.2 : 1;
-  
-  var translate = (seats === 5) ? translateMapFive[index]:translateMapNine[index];
-
-  return `translateX(${translate[0] * multiply * Math.abs(multiply)}%) translateY(${translate[1] * multiply}%)`;
+  return {
+    bottom: pos[0] + '%',
+    left: pos[1] + '%'
+  };
 }
